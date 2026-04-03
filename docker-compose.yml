@@ -22,7 +22,9 @@ services:
       - redis
     environment:
       SERVER_PORT: 8080
-      DB_URL: jdbc:postgresql://postgres:5432/freelancer_db
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: freelancer_db
       DB_USERNAME: freelancer
       DB_PASSWORD: freelancer
       REDIS_HOST: redis
