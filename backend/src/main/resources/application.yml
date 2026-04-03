@@ -3,6 +3,7 @@ server:
 
 spring:
   datasource:
+    url: jdbc:${DB_URL:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:freelancer_db}}
     username: ${DB_USERNAME:freelancer}
     password: ${DB_PASSWORD:freelancer}
   mail:
