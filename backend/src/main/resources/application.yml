@@ -1,0 +1,42 @@
+server:
+  port: ${PORT:${SERVER_PORT:8080}}
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/freelancer_db}
+    username: ${DB_USERNAME:freelancer}
+    password: ${DB_PASSWORD:freelancer}
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:true}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+app:
+  base-url: ${APP_BASE_URL:http://localhost:5173}
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  jwt:
+    secret: ${JWT_SECRET:change-this-secret-key-change-this-secret-key-123456}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  mail:
+    from: ${MAIL_FROM:no-reply@freelancer-marketplace.local}
+  password-reset:
+    expiration-minutes: ${PASSWORD_RESET_EXPIRATION_MINUTES:15}
+  rate-limit:
+    requests-per-minute: ${RATE_LIMIT_RPM:120}

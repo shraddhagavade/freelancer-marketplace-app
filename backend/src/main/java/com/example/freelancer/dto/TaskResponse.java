@@ -1,0 +1,19 @@
+package com.example.freelancer.dto;
+import com.example.freelancer.domain.TaskStatus;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.UUID;
+public record TaskResponse(
+        UUID id,
+        String title,
+        String description,
+        BigDecimal budget,
+        TaskStatus status,
+        Integer progressPercent,
+        UUID clientId,
+        String clientName,
+        UUID acceptedFreelancerId,
+        String acceptedFreelancerName,
+        String acceptedFreelancerEmail,
+        Instant createdAt
+) {}

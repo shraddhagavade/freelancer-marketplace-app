@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-task-progress
+      author: codex
+      changes:
+        - addColumn:
+            tableName: tasks
+            columns:
+              - column:
+                  name: progress_percent
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
