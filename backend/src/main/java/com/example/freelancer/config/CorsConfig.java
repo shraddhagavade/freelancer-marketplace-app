@@ -23,12 +23,20 @@ public class CorsConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        List<String> resolvedOrigins = Arrays.stream(allowedOrigins.split(","))
+        List<String> configuredOrigins = Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim)
                 .filter(origin -> !origin.isEmpty())
                 .toList();
 
-        config.setAllowedOrigins(resolvedOrigins.isEmpty() ? DEFAULT_ALLOWED_ORIGINS : resolvedOrigins);
+        List<String> resolvedOrigins = DEFAULT_ALLOWED_ORIGINS.stream()
+                .filter(origin -> !origin.isEmpty())
+                .collect(java.util.stream.Collectors.toCollection(java.util.ArrayList::new));
+
+        configuredOrigins.stream()
+                .filter(origin -> !resolvedOrigins.contains(origin))
+                .forEach(resolvedOrigins::add);
+
+        config.setAllowedOrigins(resolvedOrigins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
