@@ -8,8 +8,6 @@ services:
     dockerContext: ./backend
     healthCheckPath: /api/tasks
     envVars:
-      - key: PORT
-        value: 8080
       - key: DB_URL
         fromDatabase:
           name: freelancer-marketplace-db
