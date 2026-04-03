@@ -8,16 +8,10 @@ services:
     dockerContext: ./backend
     healthCheckPath: /api/tasks
     envVars:
-      - key: DB_HOST
+      - key: DB_URL
         fromDatabase:
           name: freelancer-marketplace-db
-          property: host
-      - key: DB_PORT
-        value: 5432
-      - key: DB_NAME
-        fromDatabase:
-          name: freelancer-marketplace-db
-          property: database
+          property: connectionString
       - key: DB_USERNAME
         fromDatabase:
           name: freelancer-marketplace-db
