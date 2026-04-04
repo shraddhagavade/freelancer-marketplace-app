@@ -878,12 +878,27 @@ export default function App() {
 
       <div className="hero-panel">
         <div className="hero-copy">
-          <span className="eyebrow">Freelance, beautifully organized</span>
-          <h1>Manage tasks, applications, and delivery progress without losing track of the work.</h1>
+          <div className="auth-marquee" aria-hidden="true">
+            <span>Launch faster</span>
+            <span>Track every handoff</span>
+            <span>Hire with clarity</span>
+            <span>Deliver with proof</span>
+          </div>
+          <span className="eyebrow">Built for high-tempo freelance work</span>
+          <h1>Run your freelance marketplace like a performance product, not a messy inbox.</h1>
           <p>
-            Clients can publish tasks and review freelancer responses. Freelancers can see open tasks, apply quickly,
-            and update progress once work begins.
+            A sharper workflow for clients and freelancers who want faster hiring, cleaner communication, and live delivery visibility from the first brief to the final handoff.
           </p>
+          <div className="hero-kicker-stack">
+            <div className="hero-kicker-card hero-kicker-primary">
+              <span className="mini-eyebrow">Brand promise</span>
+              <strong>One platform for posting, matching, tracking, and shipping work.</strong>
+            </div>
+            <div className="hero-kicker-card">
+              <span className="mini-eyebrow">Experience</span>
+              <strong>Bold, focused, and ready for real production teams.</strong>
+            </div>
+          </div>
           <div className="hero-motion-cluster" aria-hidden="true">
             <div className="motion-board">
               <div className="motion-board-glow" />
@@ -931,6 +946,18 @@ export default function App() {
           <div className="audience-banner">
             <span className="audience-badge">{selectedAudience === 'CLIENT' ? 'Client flow selected' : 'Freelancer flow selected'}</span>
             <p>{selectedAudience === 'CLIENT' ? 'The content below is highlighting the client-side workflow.' : 'The content below is highlighting the freelancer-side workflow.'}</p>
+          </div>
+          <div className="hero-metrics-grid">
+            <div className="hero-metric-card">
+              <span className="mini-eyebrow">Response speed</span>
+              <strong>Under one board</strong>
+              <p>Tasks, proposals, chat, and progress stay connected instead of scattered across tools.</p>
+            </div>
+            <div className="hero-metric-card">
+              <span className="mini-eyebrow">Visibility</span>
+              <strong>Live status flow</strong>
+              <p>Clients see movement. Freelancers show momentum. Both sides stay aligned without chasing updates.</p>
+            </div>
           </div>
           <div className="hero-lower-stage">
             <div className="stage-grid" aria-hidden="true">
@@ -997,6 +1024,11 @@ export default function App() {
               <div className="paper-stack paper-two" />
               <div className="cat-shape" />
             </div>
+          </div>
+          <div className="showcase-card showcase-premium-banner">
+            <span className="eyebrow">Marketplace identity</span>
+            <strong>Professional by default. Dynamic when it matters.</strong>
+            <p>Designed to feel like a premium workflow product with live movement, strong hierarchy, and cleaner operational focus.</p>
           </div>
           <div className="showcase-card showcase-primary">
             <span className="eyebrow">Workflow</span>
