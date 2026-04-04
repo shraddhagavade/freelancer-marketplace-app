@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-payment-release-columns
+      author: codex
+      changes:
+        - addColumn:
+            tableName: payments
+            columns:
+              - column: { name: payment_method, type: VARCHAR(40) }
+              - column: { name: transaction_reference, type: VARCHAR(80) }
+              - column: { name: verified_at, type: TIMESTAMP }
+              - column: { name: released_at, type: TIMESTAMP }
+        - addUniqueConstraint:
+            tableName: payments
+            columnNames: transaction_reference
+            constraintName: uk_payments_transaction_reference

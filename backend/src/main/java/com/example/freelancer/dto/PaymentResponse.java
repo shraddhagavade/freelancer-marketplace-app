@@ -1,6 +1,21 @@
 package com.example.freelancer.dto;
+import com.example.freelancer.domain.PaymentMethod;
 import com.example.freelancer.domain.PaymentStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
-public record PaymentResponse(UUID id, UUID taskId, UUID payerId, UUID payeeId, BigDecimal amount, PaymentStatus status, Instant createdAt) {}
+public record PaymentResponse(
+        UUID id,
+        UUID taskId,
+        UUID payerId,
+        String payerName,
+        UUID payeeId,
+        String payeeName,
+        BigDecimal amount,
+        PaymentMethod paymentMethod,
+        String transactionReference,
+        PaymentStatus status,
+        Instant createdAt,
+        Instant verifiedAt,
+        Instant releasedAt
+) {}

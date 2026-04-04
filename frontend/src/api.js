@@ -133,3 +133,36 @@ export async function sendTaskMessage(token, payload) {
   });
   return res.data;
 }
+
+export async function fetchPayments(token) {
+  const res = await requestJson(`${API}/payments`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  return res.data;
+}
+
+export async function createPayment(token, payload) {
+  const res = await requestJson(`${API}/payments`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+  return res.data;
+}
+
+export async function confirmPayment(token, paymentId) {
+  const res = await requestJson(`${API}/payments/${paymentId}/confirm`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ confirmRelease: true })
+  });
+  return res.data;
+}

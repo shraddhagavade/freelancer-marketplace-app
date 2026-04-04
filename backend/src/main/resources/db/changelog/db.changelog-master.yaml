@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/003-password-reset-tokens.yaml
   - include:
       file: db/changelog/004-task-milestones.yaml
+  - include:
+      file: db/changelog/005-payment-release-workflow.yaml

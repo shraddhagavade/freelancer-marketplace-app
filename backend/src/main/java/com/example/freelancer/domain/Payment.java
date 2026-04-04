@@ -11,6 +11,10 @@ public class Payment {
 @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="payer_id", nullable=false) private User payer;
 @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="payee_id", nullable=false) private User payee;
 @Column(nullable=false, precision=12, scale=2) private java.math.BigDecimal amount;
+@Enumerated(EnumType.STRING) @Column(name="payment_method") private PaymentMethod paymentMethod;
+@Column(name="transaction_reference", length=80) private String transactionReference;
 @Enumerated(EnumType.STRING) @Column(nullable=false) private PaymentStatus status;
 @Column(name="created_at", nullable=false) private Instant createdAt;
+@Column(name="verified_at") private Instant verifiedAt;
+@Column(name="released_at") private Instant releasedAt;
 }

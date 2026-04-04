@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { acceptApplication, applyTask, createTask, fetchTaskApplications, fetchTaskMessages, fetchTasks, login, register, requestPasswordReset, resetPassword, sendTaskMessage, updateMilestoneStatus, updateTaskProgress } from './api';
+import { acceptApplication, applyTask, confirmPayment, createPayment, createTask, fetchPayments, fetchTaskApplications, fetchTaskMessages, fetchTasks, login, register, requestPasswordReset, resetPassword, sendTaskMessage, updateMilestoneStatus, updateTaskProgress } from './api';
 
 const STORAGE_KEYS = {
   token: 'token',
@@ -96,6 +96,29 @@ function describeClientDelivery(task) {
 
   return `${task.acceptedFreelancerName} accepted this task and can now start updating progress.`;
 }
+
+function paymentTone(status) {
+  if (status === 'COMPLETED') return 'success';
+  if (status === 'INITIATED') return 'warm';
+  return 'neutral';
+}
+
+function describePaymentStatus(payment) {
+  if (!payment) return 'No payout prepared yet.';
+  if (payment.status === 'COMPLETED') {
+    return `${payment.paymentMethod.replace('_', ' ')} released securely under ${payment.transactionReference}.`;
+  }
+  if (payment.status === 'INITIATED') {
+    return `Prepared via ${payment.paymentMethod.replace('_', ' ')} and waiting for client verification.`;
+  }
+  return 'Payment status unavailable.';
+}
+
+const PAYMENT_METHOD_OPTIONS = [
+  { value: 'UPI', label: 'UPI' },
+  { value: 'CARD', label: 'Card' },
+  { value: 'BANK_TRANSFER', label: 'Bank transfer' }
+];
 
 function DashboardStat({ label, value, helper }) {
   return (
@@ -476,6 +499,10 @@ export default function App() {
   const [taskApplications, setTaskApplications] = useState({});
   const [progressInputs, setProgressInputs] = useState({});
   const [updatingTaskIds, setUpdatingTaskIds] = useState({});
+  const [payments, setPayments] = useState([]);
+  const [paymentDrafts, setPaymentDrafts] = useState({});
+  const [creatingPaymentTaskIds, setCreatingPaymentTaskIds] = useState({});
+  const [confirmingPaymentIds, setConfirmingPaymentIds] = useState({});
   const [updatingMilestoneIds, setUpdatingMilestoneIds] = useState({});
   const [taskMessages, setTaskMessages] = useState({});
   const [messageDrafts, setMessageDrafts] = useState({});
@@ -553,8 +580,28 @@ export default function App() {
     }
   }
 
+  async function refreshPayments(showFailureMessage = false) {
+    if (!token) {
+      setPayments([]);
+      return;
+    }
+
+    try {
+      const data = await fetchPayments(token);
+      setPayments(Array.isArray(data) ? data : []);
+    } catch {
+      if (showFailureMessage) {
+        setMessage('We could not load payment status just now.');
+      }
+    }
+  }
+
   useEffect(() => {
     refreshTasks(true);
+  }, [token]);
+
+  useEffect(() => {
+    refreshPayments(false);
   }, [token]);
 
   useEffect(() => {
@@ -651,6 +698,14 @@ export default function App() {
           .map((application) => ({ ...application, taskTitle: task.title }))
       ),
     [clientPortfolio, taskApplications]
+  );
+  const paymentsByTaskId = useMemo(
+    () => Object.fromEntries(payments.map((payment) => [payment.taskId, payment])),
+    [payments]
+  );
+  const releasedPaymentCount = useMemo(
+    () => payments.filter((payment) => payment.status === 'COMPLETED').length,
+    [payments]
   );
 
   useEffect(() => {
@@ -952,6 +1007,64 @@ export default function App() {
       }
     } finally {
       setUpdatingMilestoneIds((current) => ({ ...current, [milestoneId]: false }));
+    }
+  }
+
+  function updatePaymentDraft(taskId, field, value) {
+    setPaymentDrafts((current) => ({
+      ...current,
+      [taskId]: {
+        amount: String(current[taskId]?.amount ?? ''),
+        paymentMethod: current[taskId]?.paymentMethod || 'UPI',
+        ...current[taskId],
+        [field]: value
+      }
+    }));
+  }
+
+  async function handleCreatePayment(task) {
+    const draft = paymentDrafts[task.id] || {
+      amount: String(task.budget ?? ''),
+      paymentMethod: 'UPI'
+    };
+    const amount = Number(draft.amount || task.budget || 0);
+
+    if (!amount || Number.isNaN(amount) || amount <= 0) {
+      setMessage('Enter a valid payment amount before preparing the release.');
+      return;
+    }
+
+    setCreatingPaymentTaskIds((current) => ({ ...current, [task.id]: true }));
+    try {
+      const data = await createPayment(token, {
+        taskId: task.id,
+        amount,
+        paymentMethod: draft.paymentMethod || 'UPI'
+      });
+
+      if (data.id) {
+        setMessage(`Secure payout prepared for ${task.acceptedFreelancerName}. Verify once to release the funds.`);
+        await refreshPayments(false);
+      } else {
+        setMessage(data.message || 'Could not prepare payment right now.');
+      }
+    } finally {
+      setCreatingPaymentTaskIds((current) => ({ ...current, [task.id]: false }));
+    }
+  }
+
+  async function handleConfirmPayment(paymentId) {
+    setConfirmingPaymentIds((current) => ({ ...current, [paymentId]: true }));
+    try {
+      const data = await confirmPayment(token, paymentId);
+      if (data.id) {
+        setMessage(`Payment ${data.transactionReference} was verified and released successfully.`);
+        await refreshPayments(false);
+      } else {
+        setMessage(data.message || 'Could not release payment right now.');
+      }
+    } finally {
+      setConfirmingPaymentIds((current) => ({ ...current, [paymentId]: false }));
     }
   }
 
@@ -1556,6 +1669,16 @@ export default function App() {
                   <span>{formatCurrency(task.budget)}</span>
                   <small>{task.clientLabel} | Completed</small>
                   <p>{task.description}</p>
+                  <span className={`status-badge ${paymentTone(paymentsByTaskId[task.id]?.status)}`}>
+                    {paymentsByTaskId[task.id]
+                      ? paymentsByTaskId[task.id].status === 'COMPLETED'
+                        ? 'Payment released'
+                        : 'Awaiting verification'
+                      : 'Awaiting client payout'}
+                  </span>
+                  {paymentsByTaskId[task.id]?.transactionReference && (
+                    <small>Reference {paymentsByTaskId[task.id].transactionReference}</small>
+                  )}
                 </div>
               ))}
             </div>
@@ -1736,6 +1859,7 @@ export default function App() {
         <DashboardStat label="Visible briefs" value={clientPortfolio.length} helper="Tasks currently on your board or in the marketplace snapshot." />
         <DashboardStat label="In progress" value={clientLiveDeliveries.length} helper="Work already underway with freelancers." />
         <DashboardStat label="Completed" value={clientCompletedDeliveries.length} helper="Delivered tasks ready for review or closeout." />
+        <DashboardStat label="Payments released" value={releasedPaymentCount} helper="Secure payout releases completed from your client desk." />
         <DashboardStat label="Budget tracked" value={formatCurrency(clientPortfolio.reduce((sum, task) => sum + Number(task.budget || 0), 0))} helper="Combined value of the work currently visible on your board." />
       </section>
 
@@ -1819,6 +1943,109 @@ export default function App() {
                 />
               </article>
             ))}
+          </div>
+        </section>
+      )}
+
+      {!!clientCompletedDeliveries.length && (
+        <section className="card acceptance-panel client-premium-panel">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">Payment release</span>
+              <h2>Delivered work ready for payout</h2>
+            </div>
+          </div>
+          <div className="project-stack payment-release-stack">
+            {clientCompletedDeliveries.map((task) => {
+              const payment = paymentsByTaskId[task.id];
+              const paymentDraft = paymentDrafts[task.id] || {
+                amount: String(task.budget ?? ''),
+                paymentMethod: 'UPI'
+              };
+
+              return (
+                <article key={task.id} className="project-card payment-release-card">
+                  <div className="project-header">
+                    <div>
+                      <h3>{task.title}</h3>
+                      <p>{task.acceptedFreelancerName} delivered this brief and is ready for payout.</p>
+                    </div>
+                    <span className={`status-badge ${paymentTone(payment?.status)}`}>
+                      {payment ? payment.status.replace('_', ' ') : 'UNPAID'}
+                    </span>
+                  </div>
+                  <div className="project-meta">
+                    <span>{formatCurrency(task.budget)}</span>
+                    <span>{describePaymentStatus(payment)}</span>
+                  </div>
+                  <div className="payment-release-layout">
+                    <div className="payment-release-details">
+                      <div className="payment-detail-chip">
+                        <small>Freelancer</small>
+                        <strong>{task.acceptedFreelancerName}</strong>
+                      </div>
+                      <div className="payment-detail-chip">
+                        <small>Budget</small>
+                        <strong>{formatCurrency(task.budget)}</strong>
+                      </div>
+                      {payment?.transactionReference && (
+                        <div className="payment-detail-chip">
+                          <small>Reference</small>
+                          <strong>{payment.transactionReference}</strong>
+                        </div>
+                      )}
+                    </div>
+                    {payment ? (
+                      <div className="payment-verify-panel">
+                        <span className="mini-eyebrow">Secure release</span>
+                        <strong>{payment.status === 'COMPLETED' ? 'Funds released and verified' : 'One verification step left'}</strong>
+                        <p>{describePaymentStatus(payment)}</p>
+                        {payment.status !== 'COMPLETED' && (
+                          <button
+                            type="button"
+                            disabled={!!confirmingPaymentIds[payment.id]}
+                            onClick={() => handleConfirmPayment(payment.id)}
+                          >
+                            {confirmingPaymentIds[payment.id] ? 'Verifying...' : 'Verify & Release Payment'}
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="payment-setup-panel">
+                        <label>
+                          <span className="mini-eyebrow">Release amount</span>
+                          <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            value={paymentDraft.amount}
+                            onChange={(event) => updatePaymentDraft(task.id, 'amount', event.target.value)}
+                          />
+                        </label>
+                        <label>
+                          <span className="mini-eyebrow">Method</span>
+                          <select
+                            value={paymentDraft.paymentMethod}
+                            onChange={(event) => updatePaymentDraft(task.id, 'paymentMethod', event.target.value)}
+                          >
+                            {PAYMENT_METHOD_OPTIONS.map((option) => (
+                              <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
+                          </select>
+                        </label>
+                        <button
+                          type="button"
+                          disabled={!!creatingPaymentTaskIds[task.id]}
+                          onClick={() => handleCreatePayment(task)}
+                        >
+                          {creatingPaymentTaskIds[task.id] ? 'Preparing...' : 'Prepare Secure Payment'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
       )}
