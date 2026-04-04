@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/002-task-progress.yaml
   - include:
       file: db/changelog/003-password-reset-tokens.yaml
+  - include:
+      file: db/changelog/004-task-milestones.yaml

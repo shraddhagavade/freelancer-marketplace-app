@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-task-milestones
+      author: codex
+      changes:
+        - createTable:
+            tableName: task_milestones
+            columns:
+              - column: { name: id, type: UUID, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: task_id, type: UUID, constraints: { nullable: false } }
+              - column: { name: title, type: VARCHAR(180), constraints: { nullable: false } }
+              - column: { name: due_date, type: DATE }
+              - column: { name: status, type: VARCHAR(40), constraints: { nullable: false } }
+              - column: { name: sort_order, type: INT, constraints: { nullable: false } }
+              - column: { name: completed_at, type: TIMESTAMP }
+        - addForeignKeyConstraint:
+            baseTableName: task_milestones
+            baseColumnNames: task_id
+            referencedTableName: tasks
+            referencedColumnNames: id
+            constraintName: fk_task_milestones_task

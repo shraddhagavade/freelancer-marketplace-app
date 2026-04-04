@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { acceptApplication, applyTask, createTask, fetchTaskApplications, fetchTaskMessages, fetchTasks, login, register, requestPasswordReset, resetPassword, sendTaskMessage, updateTaskProgress } from './api';
+import { acceptApplication, applyTask, createTask, fetchTaskApplications, fetchTaskMessages, fetchTasks, login, register, requestPasswordReset, resetPassword, sendTaskMessage, updateMilestoneStatus, updateTaskProgress } from './api';
 
 const STORAGE_KEYS = {
   token: 'token',
@@ -55,6 +55,17 @@ function formatMessageTime(value) {
   });
 }
 
+function formatDueDate(value) {
+  if (!value) return 'No due date';
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return 'No due date';
+  return date.toLocaleDateString([], {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+}
+
 function statusTone(status) {
   const tones = {
     OPEN: 'neutral',
@@ -107,6 +118,104 @@ function ProgressBar({ value }) {
 function FieldError({ message }) {
   if (!message) return null;
   return <p className="field-error">{message}</p>;
+}
+
+function createEmptyMilestoneDraft() {
+  return { title: '', dueDate: '' };
+}
+
+function MilestonePlanner({ milestones, onChange, onAdd, onRemove }) {
+  return (
+    <div className="milestone-planner">
+      <div className="milestone-planner-head">
+        <div>
+          <span className="mini-eyebrow">Milestones</span>
+          <strong>Plan the delivery steps</strong>
+        </div>
+        <button type="button" className="ghost-button compact-button" onClick={onAdd}>
+          Add step
+        </button>
+      </div>
+      <div className="milestone-draft-list">
+        {milestones.map((milestone, index) => (
+          <div key={`draft-${index}`} className="milestone-draft-row">
+            <span className="milestone-draft-index">{String(index + 1).padStart(2, '0')}</span>
+            <input
+              placeholder="Milestone title"
+              value={milestone.title}
+              onChange={(event) => onChange(index, 'title', event.target.value)}
+            />
+            <input
+              type="date"
+              value={milestone.dueDate}
+              onChange={(event) => onChange(index, 'dueDate', event.target.value)}
+            />
+            <button
+              type="button"
+              className="ghost-button compact-button"
+              onClick={() => onRemove(index)}
+              disabled={milestones.length === 1}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TaskMilestones({ milestones, mode = 'client', updatingMilestoneIds = {}, onToggle }) {
+  if (!Array.isArray(milestones) || !milestones.length) return null;
+
+  const completedCount = milestones.filter((milestone) => milestone.status === 'COMPLETED').length;
+
+  return (
+    <div className={`task-milestones ${mode === 'freelancer' ? 'interactive' : ''}`}>
+      <div className="task-milestones-head">
+        <div>
+          <span className="mini-eyebrow">Milestone flow</span>
+          <strong>{completedCount}/{milestones.length} complete</strong>
+        </div>
+        <span className="task-milestones-summary">
+          {completedCount === milestones.length ? 'Ready to wrap' : 'Delivery in motion'}
+        </span>
+      </div>
+      <div className="task-milestones-list">
+        {milestones.map((milestone) => {
+          const completed = milestone.status === 'COMPLETED';
+          return (
+            <article key={milestone.id} className={`task-milestone-card ${completed ? 'complete' : ''}`}>
+              <div className="task-milestone-copy">
+                <span className="task-milestone-step">Step {milestone.sortOrder}</span>
+                <strong>{milestone.title}</strong>
+                <small>{formatDueDate(milestone.dueDate)}</small>
+              </div>
+              <div className="task-milestone-side">
+                <span className={`task-milestone-status ${completed ? 'complete' : 'pending'}`}>
+                  {completed ? 'Completed' : 'Pending'}
+                </span>
+                {mode === 'freelancer' && onToggle && (
+                  <button
+                    type="button"
+                    className={completed ? 'ghost-button compact-button' : 'compact-button'}
+                    disabled={!!updatingMilestoneIds[milestone.id]}
+                    onClick={() => onToggle(milestone.id, !completed)}
+                  >
+                    {updatingMilestoneIds[milestone.id]
+                      ? 'Saving...'
+                      : completed
+                        ? 'Mark Pending'
+                        : 'Mark Complete'}
+                  </button>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function normalizeFullName(value) {
@@ -353,7 +462,12 @@ export default function App() {
   });
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [resetForm, setResetForm] = useState({ newPassword: '', confirmPassword: '' });
-  const [taskForm, setTaskForm] = useState({ title: '', description: '', budget: '' });
+  const [taskForm, setTaskForm] = useState({
+    title: '',
+    description: '',
+    budget: '',
+    milestones: [createEmptyMilestoneDraft()]
+  });
   const [ownedTaskIds, setOwnedTaskIds] = useState(() => readJson(STORAGE_KEYS.ownedTaskIds, []));
   const [appliedTaskIds, setAppliedTaskIds] = useState(() => readJson(STORAGE_KEYS.appliedTaskIds, []));
   const [registerErrors, setRegisterErrors] = useState({});
@@ -362,6 +476,7 @@ export default function App() {
   const [taskApplications, setTaskApplications] = useState({});
   const [progressInputs, setProgressInputs] = useState({});
   const [updatingTaskIds, setUpdatingTaskIds] = useState({});
+  const [updatingMilestoneIds, setUpdatingMilestoneIds] = useState({});
   const [taskMessages, setTaskMessages] = useState({});
   const [messageDrafts, setMessageDrafts] = useState({});
   const [loadingMessageTaskIds, setLoadingMessageTaskIds] = useState({});
@@ -694,16 +809,57 @@ export default function App() {
 
   async function handleTaskCreate(event) {
     event.preventDefault();
-    const payload = { ...taskForm, budget: Number(taskForm.budget) };
+    const milestones = (taskForm.milestones || [])
+      .map((milestone) => ({
+        title: milestone.title.trim(),
+        dueDate: milestone.dueDate || null
+      }))
+      .filter((milestone) => milestone.title);
+    const payload = {
+      title: taskForm.title.trim(),
+      description: taskForm.description.trim(),
+      budget: Number(taskForm.budget),
+      milestones
+    };
     const data = await createTask(token, payload);
     if (data.id) {
       setOwnedTaskIds((current) => (current.includes(data.id) ? current : [...current, data.id]));
       setMessage('Task created and added to your client board.');
-      setTaskForm({ title: '', description: '', budget: '' });
+      setTaskForm({
+        title: '',
+        description: '',
+        budget: '',
+        milestones: [createEmptyMilestoneDraft()]
+      });
       await refreshTasks(false);
     } else {
       setMessage(data.message || 'Task creation failed');
     }
+  }
+
+  function updateMilestoneDraft(index, field, value) {
+    setTaskForm((current) => ({
+      ...current,
+      milestones: current.milestones.map((milestone, milestoneIndex) =>
+        milestoneIndex === index ? { ...milestone, [field]: value } : milestone
+      )
+    }));
+  }
+
+  function addMilestoneDraft() {
+    setTaskForm((current) => ({
+      ...current,
+      milestones: [...current.milestones, createEmptyMilestoneDraft()]
+    }));
+  }
+
+  function removeMilestoneDraft(index) {
+    setTaskForm((current) => ({
+      ...current,
+      milestones: current.milestones.length === 1
+        ? current.milestones
+        : current.milestones.filter((_, milestoneIndex) => milestoneIndex !== index)
+    }));
   }
 
   async function handleApply(taskId) {
@@ -780,6 +936,22 @@ export default function App() {
       }
     } finally {
       setUpdatingTaskIds((current) => ({ ...current, [taskId]: false }));
+    }
+  }
+
+  async function handleMilestoneToggle(taskId, milestoneId, completed) {
+    setUpdatingMilestoneIds((current) => ({ ...current, [milestoneId]: true }));
+    try {
+      const data = await updateMilestoneStatus(token, taskId, milestoneId, completed);
+      if (data.id) {
+        applyTaskUpdateLocally(data);
+        setMessage(completed ? 'Milestone marked complete and client progress updated live.' : 'Milestone moved back to pending.');
+        await refreshTasks(false);
+      } else {
+        setMessage(data.message || 'Could not update this milestone yet.');
+      }
+    } finally {
+      setUpdatingMilestoneIds((current) => ({ ...current, [milestoneId]: false }));
     }
   }
 
@@ -1288,6 +1460,12 @@ export default function App() {
                         <span>{task.progress}% complete</span>
                       </div>
                       <ProgressBar value={task.progress} />
+                      <TaskMilestones
+                        milestones={task.milestones}
+                        mode="freelancer"
+                        updatingMilestoneIds={updatingMilestoneIds}
+                        onToggle={(milestoneId, completed) => handleMilestoneToggle(task.id, milestoneId, completed)}
+                      />
                     </div>
                     <aside className="freelancer-control-dock">
                       <div className="freelancer-control-gauge" aria-hidden="true">
@@ -1295,41 +1473,51 @@ export default function App() {
                         <strong>{task.progress}%</strong>
                         <span>Delivery pace</span>
                       </div>
-                      <form
-                        className="progress-editor freelancer-progress-editor"
-                        onSubmit={(event) => {
-                          event.preventDefault();
-                          submitProgress(task.id);
-                        }}
-                      >
-                        <label>
-                          <span className="mini-eyebrow">Exact progress</span>
-                          <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="1"
-                            value={progressInputs[task.id] ?? task.progress}
-                            onChange={(event) =>
-                              setProgressInputs((current) => ({
-                                ...current,
-                                [task.id]: event.target.value
-                              }))
-                            }
-                          />
-                        </label>
-                        <button type="submit" disabled={!!updatingTaskIds[task.id]}>
-                          {updatingTaskIds[task.id] ? 'Saving...' : 'Set Exact %'}
-                        </button>
-                      </form>
-                      <div className="button-row freelancer-button-row">
-                        <button type="button" className="ghost-button" disabled={!!updatingTaskIds[task.id]} onClick={() => adjustProgress(task.id, -5)}>
-                          Lower
-                        </button>
-                        <button type="button" disabled={!!updatingTaskIds[task.id]} onClick={() => adjustProgress(task.id, 5)}>
-                          {updatingTaskIds[task.id] ? 'Saving...' : 'Update Progress'}
-                        </button>
-                      </div>
+                      {task.milestones?.length ? (
+                        <div className="freelancer-milestone-console">
+                          <span className="mini-eyebrow">Milestone-driven delivery</span>
+                          <strong>Complete steps to keep client progress synced.</strong>
+                          <p>Each finished milestone updates the task percentage automatically.</p>
+                        </div>
+                      ) : (
+                        <>
+                          <form
+                            className="progress-editor freelancer-progress-editor"
+                            onSubmit={(event) => {
+                              event.preventDefault();
+                              submitProgress(task.id);
+                            }}
+                          >
+                            <label>
+                              <span className="mini-eyebrow">Exact progress</span>
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="1"
+                                value={progressInputs[task.id] ?? task.progress}
+                                onChange={(event) =>
+                                  setProgressInputs((current) => ({
+                                    ...current,
+                                    [task.id]: event.target.value
+                                  }))
+                                }
+                              />
+                            </label>
+                            <button type="submit" disabled={!!updatingTaskIds[task.id]}>
+                              {updatingTaskIds[task.id] ? 'Saving...' : 'Set Exact %'}
+                            </button>
+                          </form>
+                          <div className="button-row freelancer-button-row">
+                            <button type="button" className="ghost-button" disabled={!!updatingTaskIds[task.id]} onClick={() => adjustProgress(task.id, -5)}>
+                              Lower
+                            </button>
+                            <button type="button" disabled={!!updatingTaskIds[task.id]} onClick={() => adjustProgress(task.id, 5)}>
+                              {updatingTaskIds[task.id] ? 'Saving...' : 'Update Progress'}
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </aside>
                   </div>
                   <TaskConversation
@@ -1646,6 +1834,12 @@ export default function App() {
           <input placeholder="Project title" value={taskForm.title} onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })} />
           <textarea placeholder="Describe the deliverable, context, and success criteria" value={taskForm.description} onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })} />
           <input placeholder="Budget" value={taskForm.budget} onChange={(e) => setTaskForm({ ...taskForm, budget: e.target.value })} />
+          <MilestonePlanner
+            milestones={taskForm.milestones}
+            onChange={updateMilestoneDraft}
+            onAdd={addMilestoneDraft}
+            onRemove={removeMilestoneDraft}
+          />
           <button type="submit">Publish Task</button>
         </form>
 
@@ -1684,6 +1878,7 @@ export default function App() {
                   <span>{task.progressPercent ?? 0}% complete</span>
                   <span>{task.status === 'COMPLETED' ? 'Finished' : (task.progressPercent ?? 0) > 0 ? 'Started by freelancer and updating live' : 'Accepted and waiting for the first progress update'}</span>
                 </div>
+                <TaskMilestones milestones={task.milestones} />
                 <ProgressBar value={task.progressPercent ?? 0} />
                 {!!taskApplications[task.id]?.length && (
                   <div className="mini-stack embedded-stack">

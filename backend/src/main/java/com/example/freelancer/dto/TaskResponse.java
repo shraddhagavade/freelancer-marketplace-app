@@ -2,6 +2,7 @@ package com.example.freelancer.dto;
 import com.example.freelancer.domain.TaskStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 public record TaskResponse(
         UUID id,
@@ -15,5 +16,6 @@ public record TaskResponse(
         UUID acceptedFreelancerId,
         String acceptedFreelancerName,
         String acceptedFreelancerEmail,
-        Instant createdAt
+        Instant createdAt,
+        List<MilestoneResponse> milestones
 ) {}

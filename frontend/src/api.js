@@ -101,6 +101,18 @@ export async function updateTaskProgress(token, taskId, progressPercent) {
   return res.data;
 }
 
+export async function updateMilestoneStatus(token, taskId, milestoneId, completed) {
+  const res = await requestJson(`${API}/tasks/${taskId}/milestones/${milestoneId}`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ completed })
+  });
+  return res.data;
+}
+
 export async function fetchTaskMessages(token, taskId) {
   const res = await requestJson(`${API}/messages/task/${taskId}`, {
     headers: {

@@ -2638,6 +2638,156 @@ button:active {
   max-width: none;
 }
 
+.milestone-planner {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top right, rgba(195, 255, 82, 0.1), transparent 32%),
+    linear-gradient(135deg, rgba(18, 18, 18, 0.94), rgba(26, 21, 18, 0.9));
+  border: 1px solid rgba(245, 241, 232, 0.1);
+}
+
+.milestone-planner-head,
+.task-milestones-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.milestone-planner-head strong,
+.task-milestones-head strong {
+  display: block;
+}
+
+.milestone-draft-list,
+.task-milestones-list {
+  display: grid;
+  gap: 12px;
+}
+
+.milestone-draft-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1.6fr) minmax(170px, 0.8fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.milestone-draft-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  border-radius: 16px;
+  color: var(--text);
+  background: rgba(245, 241, 232, 0.06);
+  border: 1px solid rgba(245, 241, 232, 0.08);
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+}
+
+.task-milestones {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at left top, rgba(242, 75, 46, 0.08), transparent 30%),
+    linear-gradient(145deg, rgba(14, 14, 14, 0.88), rgba(22, 22, 22, 0.8));
+  border: 1px solid rgba(245, 241, 232, 0.08);
+}
+
+.task-milestones-summary {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(245, 241, 232, 0.06);
+  border: 1px solid rgba(245, 241, 232, 0.08);
+  color: var(--text-soft);
+  font-size: 0.84rem;
+}
+
+.task-milestone-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(245, 241, 232, 0.08);
+}
+
+.task-milestone-card.complete {
+  background:
+    radial-gradient(circle at right center, rgba(195, 255, 82, 0.12), transparent 36%),
+    rgba(255, 255, 255, 0.03);
+  border-color: rgba(195, 255, 82, 0.22);
+}
+
+.task-milestone-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.task-milestone-copy strong {
+  font-size: 1rem;
+}
+
+.task-milestone-copy small,
+.freelancer-milestone-console p {
+  color: var(--text-soft);
+}
+
+.task-milestone-step {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.task-milestone-side {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+}
+
+.task-milestone-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(245, 241, 232, 0.08);
+}
+
+.task-milestone-status.pending {
+  color: var(--gold);
+  background: rgba(255, 204, 115, 0.08);
+}
+
+.task-milestone-status.complete {
+  color: var(--aqua);
+  background: rgba(195, 255, 82, 0.09);
+}
+
+.freelancer-milestone-console {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 132, 80, 0.14), transparent 32%),
+    linear-gradient(145deg, rgba(21, 21, 21, 0.95), rgba(14, 14, 14, 0.88));
+  border: 1px solid rgba(245, 241, 232, 0.08);
+}
+
+.freelancer-milestone-console strong {
+  font-size: 1rem;
+}
+
 .freelancer-button-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3317,5 +3467,20 @@ button:active {
   .freelancer-opportunity-footer {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .milestone-draft-row {
+    grid-template-columns: 1fr;
+  }
+
+  .milestone-planner-head,
+  .task-milestones-head,
+  .task-milestone-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .task-milestone-side {
+    justify-items: start;
   }
 }

@@ -2,6 +2,7 @@ package com.example.freelancer.controller;
 
 import com.example.freelancer.dto.CreateTaskRequest;
 import com.example.freelancer.dto.TaskResponse;
+import com.example.freelancer.dto.UpdateMilestoneStatusRequest;
 import com.example.freelancer.dto.UpdateTaskProgressRequest;
 import com.example.freelancer.service.TaskService;
 import jakarta.validation.Valid;
@@ -38,5 +39,14 @@ public class TaskController {
                                        @Valid @RequestBody UpdateTaskProgressRequest req,
                                        Authentication authentication) {
         return taskService.updateProgress(taskId, req.progressPercent(), authentication.getName());
+    }
+
+    @PatchMapping("/{taskId}/milestones/{milestoneId}")
+    @PreAuthorize("hasRole('FREELANCER')")
+    public TaskResponse updateMilestoneStatus(@PathVariable java.util.UUID taskId,
+                                              @PathVariable java.util.UUID milestoneId,
+                                              @Valid @RequestBody UpdateMilestoneStatusRequest req,
+                                              Authentication authentication) {
+        return taskService.updateMilestoneStatus(taskId, milestoneId, req.completed(), authentication.getName());
     }
 }
