@@ -1192,90 +1192,59 @@ export default function App() {
             <span>Hire with clarity</span>
             <span>Deliver with proof</span>
           </div>
-          <div className="hero-heading-stack">
-            <span className="eyebrow">Built for high-tempo freelance work</span>
-            <h1>Run your freelance marketplace like a premium operating system for work.</h1>
-            <p>
-              A more elevated workflow for clients and freelancers who want faster hiring, cleaner communication, and visible delivery momentum from the first brief to the final handoff.
-            </p>
-          </div>
-          <div className="hero-intelligence-strip" aria-hidden="true">
-            <div className="hero-intelligence-item">
-              <span className="intelligence-dot" />
-              <div>
-                <small>Client control</small>
-                <strong>Private task boards</strong>
-              </div>
-            </div>
-            <div className="hero-intelligence-item">
-              <span className="intelligence-dot warm" />
-              <div>
-                <small>Live sync</small>
-                <strong>Progress and chat linked</strong>
-              </div>
-            </div>
-            <div className="hero-intelligence-item">
-              <span className="intelligence-dot lime" />
-              <div>
-                <small>Delivery proof</small>
-                <strong>Accepted work stays visible</strong>
-              </div>
-            </div>
-          </div>
-          <div className="hero-kicker-stack">
-            <div className="hero-kicker-card hero-kicker-primary">
-              <span className="mini-eyebrow">Brand promise</span>
-              <strong>One command center for posting, matching, tracking, and shipping work.</strong>
-            </div>
-            <div className="hero-kicker-card">
-              <span className="mini-eyebrow">Experience</span>
-              <strong>Sharper hierarchy, richer motion, and cleaner delivery focus.</strong>
-            </div>
-          </div>
-          <div className="hero-motion-cluster" aria-hidden="true">
-            <div className="motion-board">
-              <div className="motion-board-glow" />
-              <div className="motion-grid-overlay" />
-              <div className="motion-badge badge-top">
-                <span className="badge-dot" />
-                <strong>3 live applications</strong>
-              </div>
-              <div className="motion-badge badge-bottom">
-                <span className="badge-dot success" />
-                <strong>Delivery lane active</strong>
-              </div>
-              <div className="motion-card queue-card">
-                <span className="mini-eyebrow">Task queue</span>
-                <strong>UI polish sprint</strong>
-                <div className="queue-lines">
+          <div className="hero-visual-story" aria-hidden="true">
+            <div className="story-scene-card story-scene-main">
+              <div className="story-scene-glow" />
+              <div className="story-scene-grid" />
+              <div className="story-scene-orbit orbit-a" />
+              <div className="story-scene-orbit orbit-b" />
+              <div className="story-scene-platform" />
+              <div className="story-dashboard-card story-dashboard-left">
+                <span className="mini-eyebrow">Client board</span>
+                <strong>Brief approved</strong>
+                <div className="story-card-lines">
                   <span />
                   <span />
                   <span />
                 </div>
               </div>
-              <div className="motion-card progress-card">
-                <span className="mini-eyebrow">Progress sync</span>
-                <strong>72% completed</strong>
-                <div className="mini-progress">
-                  <span />
-                </div>
+              <div className="story-dashboard-card story-dashboard-right">
+                <span className="mini-eyebrow">Freelancer lane</span>
+                <strong>Progress 72%</strong>
               </div>
-              <div className="orbit orbit-one" />
-              <div className="orbit orbit-two" />
-              <div className="luxury-orbit orbit-three" />
-              <div className="signal-node node-one" />
-              <div className="signal-node node-two" />
-              <div className="signal-node node-three" />
-              <div className="signal-node node-four" />
+              <div className="story-person story-person-one">
+                <span className="story-head" />
+                <span className="story-body" />
+                <span className="story-arm" />
+              </div>
+              <div className="story-person story-person-two">
+                <span className="story-head" />
+                <span className="story-body" />
+              </div>
+              <div className="story-laptop">
+                <span className="story-laptop-screen" />
+                <span className="story-laptop-base" />
+              </div>
+              <div className="story-plant">
+                <span className="story-leaf leaf-one" />
+                <span className="story-leaf leaf-two" />
+                <span className="story-pot" />
+              </div>
+              <div className="story-badge badge-sync">Client + freelancer sync</div>
+              <div className="story-badge badge-chat">Task chat attached</div>
+              <div className="story-badge badge-proof">Delivery visible</div>
+              <span className="story-node node-one" />
+              <span className="story-node node-two" />
+              <span className="story-node node-three" />
             </div>
-            <div className="hero-status-strip">
-              <div>
-                <span className="mini-eyebrow">Client side</span>
-                <strong>Post, review, accept</strong>
+            <div className="story-info-strip">
+              <div className="story-info-card">
+                <span className="mini-eyebrow">Mood</span>
+                <strong>Animated workspace instead of heavy copy</strong>
               </div>
-              <div>
-                <span className="mini-eyebrow">Freelancer side</span>
-                <strong>Apply, deliver, update</strong>
+              <div className="story-info-card">
+                <span className="mini-eyebrow">Focus</span>
+                <strong>Visual movement, live coordination, clearer product feel</strong>
               </div>
             </div>
           </div>
