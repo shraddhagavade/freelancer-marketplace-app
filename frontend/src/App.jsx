@@ -5,6 +5,7 @@ const STORAGE_KEYS = {
   token: 'token',
   role: 'role',
   email: 'email',
+  fullName: 'full-name',
   ownedTaskIds: 'owned-task-ids',
   appliedTaskIds: 'applied-task-ids',
   progressMap: 'freelancer-progress-map'
@@ -335,6 +336,7 @@ export default function App() {
   const [token, setToken] = useState(localStorage.getItem(STORAGE_KEYS.token) || '');
   const [role, setRole] = useState(localStorage.getItem(STORAGE_KEYS.role) || '');
   const [email, setEmail] = useState(localStorage.getItem(STORAGE_KEYS.email) || '');
+  const [fullName, setFullName] = useState(localStorage.getItem(STORAGE_KEYS.fullName) || '');
   const [tasks, setTasks] = useState([]);
   const [message, setMessage] = useState('');
   const [loadingTasks, setLoadingTasks] = useState(false);
@@ -500,6 +502,7 @@ export default function App() {
   const freelancerAverageProgress = myActiveFreelancerProjects.length
     ? Math.round(myActiveFreelancerProjects.reduce((total, task) => total + task.progress, 0) / myActiveFreelancerProjects.length)
     : 0;
+  const freelancerDisplayName = fullName || 'Freelancer workspace';
 
   const clientPortfolio = useMemo(() => marketplaceTasks, [marketplaceTasks]);
   const acceptedClientTasks = useMemo(
@@ -603,9 +606,11 @@ export default function App() {
       setToken(data.token);
       setRole(data.role);
       setEmail(data.email);
+      setFullName(data.fullName || '');
       localStorage.setItem(STORAGE_KEYS.token, data.token);
       localStorage.setItem(STORAGE_KEYS.role, data.role);
       localStorage.setItem(STORAGE_KEYS.email, data.email);
+      localStorage.setItem(STORAGE_KEYS.fullName, data.fullName || '');
       setMessage(`Welcome aboard, ${data.role === 'FREELANCER' ? 'your studio is ready.' : 'your client desk is ready.'}`);
       setRegisterForm({ fullName: '', email: '', password: '', confirmPassword: '', role: 'CLIENT' });
       return;
@@ -631,9 +636,11 @@ export default function App() {
       setToken(data.token);
       setRole(data.role);
       setEmail(data.email);
+      setFullName(data.fullName || '');
       localStorage.setItem(STORAGE_KEYS.token, data.token);
       localStorage.setItem(STORAGE_KEYS.role, data.role);
       localStorage.setItem(STORAGE_KEYS.email, data.email);
+      localStorage.setItem(STORAGE_KEYS.fullName, data.fullName || '');
       setMessage(`Welcome back. Your ${data.role === 'FREELANCER' ? 'freelancer workspace' : 'client command desk'} is ready.`);
       return;
     }
@@ -726,10 +733,12 @@ export default function App() {
     setToken('');
     setRole('');
     setEmail('');
+    setFullName('');
     setMessage('You have been logged out.');
     localStorage.removeItem(STORAGE_KEYS.token);
     localStorage.removeItem(STORAGE_KEYS.role);
     localStorage.removeItem(STORAGE_KEYS.email);
+    localStorage.removeItem(STORAGE_KEYS.fullName);
   }
 
   async function adjustProgress(taskId, delta) {
@@ -1148,12 +1157,34 @@ export default function App() {
             <span>Proposal radar</span>
             <span>Client sync active</span>
           </div>
-          <span className="eyebrow">Freelancer workspace</span>
-          <h1>Run your delivery pipeline like a professional studio, not a stack of tasks.</h1>
-          <p>
-            Track accepted contracts, manage proposal momentum, and decide where your delivery energy should go next with cleaner control and better live visibility.
-          </p>
-          <p className="support-text">Every newly posted client task is pulled into this marketplace board automatically.</p>
+          <div className="freelancer-visual-stage" aria-hidden="true">
+            <div className="freelancer-stage-glow" />
+            <div className="freelancer-stage-grid" />
+            <div className="freelancer-stage-card stage-card-primary">
+              <span className="mini-eyebrow">Active brief</span>
+              <strong>Dashboard polish sprint</strong>
+              <div className="stage-card-bars">
+                <span />
+                <span />
+                <span />
+              </div>
+            </div>
+            <div className="freelancer-stage-card stage-card-secondary">
+              <span className="mini-eyebrow">Delivery pace</span>
+              <strong>{freelancerAverageProgress}% synced</strong>
+            </div>
+            <div className="freelancer-stage-chip chip-one">Client updates linked</div>
+            <div className="freelancer-stage-chip chip-two">Proposal lane open</div>
+            <div className="freelancer-stage-chip chip-three">Progress visible</div>
+            <span className="freelancer-stage-node node-a" />
+            <span className="freelancer-stage-node node-b" />
+            <span className="freelancer-stage-node node-c" />
+          </div>
+          <div className="freelancer-hero-caption">
+            <span className="eyebrow">Freelancer workspace</span>
+            <p>Track accepted contracts, manage proposal momentum, and keep delivery visibility polished without a cluttered board.</p>
+            <p className="support-text">Every newly posted client task is pulled into this marketplace board automatically.</p>
+          </div>
           <div className="freelancer-hero-ribbon">
             <div className="freelancer-ribbon-card">
               <small>Active lanes</small>
@@ -1173,6 +1204,7 @@ export default function App() {
           <div className="freelancer-identity-top">
             <div>
               <span className="role-pill">{role}</span>
+              <strong>{freelancerDisplayName}</strong>
               <strong>{email || 'freelancer@workspace'}</strong>
               <p>{myActiveFreelancerProjects.length} active delivery lanes</p>
             </div>

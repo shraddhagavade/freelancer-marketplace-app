@@ -69,7 +69,7 @@ public class AuthService {
                 .roles(user.getRole().name())
                 .build();
         String token = jwtService.generateToken(principal);
-        return new AuthResponse(token, user.getEmail(), user.getRole().name());
+        return new AuthResponse(token, user.getEmail(), user.getRole().name(), user.getFullName());
     }
 
     public AuthResponse login(LoginRequest req) {
@@ -81,7 +81,7 @@ public class AuthService {
                 .password(user.getPasswordHash())
                 .roles(user.getRole().name())
                 .build();
-        return new AuthResponse(jwtService.generateToken(principal), user.getEmail(), user.getRole().name());
+        return new AuthResponse(jwtService.generateToken(principal), user.getEmail(), user.getRole().name(), user.getFullName());
     }
 
     public ErrorResponse forgotPassword(ForgotPasswordRequest req) {
