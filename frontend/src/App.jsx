@@ -246,39 +246,72 @@ function getResetTokenFromUrl() {
 }
 
 function AppHeader({ token, role, email, onLogout }) {
-  return (
-    <header className="topbar">
-      <div className="brand-lockup">
-        <div className="brand-mark" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
-        <div>
-          <strong>Freelancer Marketplace</strong>
-          <p>Post tasks, manage applications, and track project delivery in one place.</p>
-        </div>
-      </div>
+  const brandStream = [
+    'Client briefs live',
+    'Freelancer proposals moving',
+    'Progress updates synced',
+    'Task chat connected',
+    'Payments and delivery aligned'
+  ];
 
-      <div className="topbar-actions">
-        <div className="topbar-chip">
-          <span className="chip-label">Mode</span>
-          <strong>{roleLabel(role)}</strong>
-        </div>
-        {token ? (
-          <>
-            <div className="topbar-chip subtle">
-              <span className="chip-label">Signed in as</span>
-              <strong>{email || 'workspace@marketplace'}</strong>
-            </div>
-            <button type="button" className="ghost-button topbar-button" onClick={onLogout}>Logout</button>
-          </>
-        ) : (
-          <div className="topbar-chip subtle">
-            <span className="chip-label">Status</span>
-            <strong>Guest View</strong>
+  return (
+    <header className="topbar-shell">
+      {!token && (
+        <div className="brand-ticker" aria-hidden="true">
+          <div className="brand-ticker-track">
+            {[...brandStream, ...brandStream].map((item, index) => (
+              <span key={`${item}-${index}`} className="brand-ticker-item">
+                <span className="brand-ticker-dot" />
+                {item}
+              </span>
+            ))}
           </div>
-        )}
+        </div>
+      )}
+
+      <div className="topbar">
+        <div className="brand-lockup">
+          <div className="brand-mark brand-mark-orbit" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="brand-copy">
+            <div className="brand-copy-row">
+              <strong>Freelancer Marketplace</strong>
+              <span className="brand-badge">Flow OS</span>
+            </div>
+            <p>Post tasks, manage applications, and track project delivery in one place.</p>
+          </div>
+        </div>
+
+        <div className="topbar-actions">
+          <div className="topbar-chip">
+            <span className="chip-label">Mode</span>
+            <strong>{roleLabel(role)}</strong>
+          </div>
+          {token ? (
+            <>
+              <div className="topbar-chip subtle">
+                <span className="chip-label">Signed in as</span>
+                <strong>{email || 'workspace@marketplace'}</strong>
+              </div>
+              <button type="button" className="ghost-button topbar-button" onClick={onLogout}>Logout</button>
+            </>
+          ) : (
+            <>
+              <div className="topbar-chip subtle">
+                <span className="chip-label">Status</span>
+                <strong>Guest View</strong>
+              </div>
+              <div className="topbar-chip subtle topbar-chip-pulse">
+                <span className="chip-label">Brand</span>
+                <strong>Marketplace in Motion</strong>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

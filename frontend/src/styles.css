@@ -115,12 +115,78 @@ button {
   animation: rise 0.55s ease both;
 }
 
+.topbar-shell {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.brand-ticker {
+  position: relative;
+  overflow: hidden;
+  padding: 11px 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(8, 15, 27, 0.88), rgba(14, 28, 46, 0.78), rgba(8, 15, 27, 0.88));
+  border: 1px solid rgba(151, 176, 214, 0.12);
+  box-shadow: var(--shadow);
+}
+
+.brand-ticker::before,
+.brand-ticker::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  z-index: 1;
+}
+
+.brand-ticker::before {
+  left: 0;
+  background: linear-gradient(90deg, rgba(5, 10, 18, 0.96), rgba(5, 10, 18, 0));
+}
+
+.brand-ticker::after {
+  right: 0;
+  background: linear-gradient(270deg, rgba(5, 10, 18, 0.96), rgba(5, 10, 18, 0));
+}
+
+.brand-ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: max-content;
+  padding-left: 18px;
+  animation: tickerSlide 28s linear infinite;
+}
+
+.brand-ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(19, 33, 54, 0.8);
+  border: 1px solid rgba(151, 176, 214, 0.1);
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.brand-ticker-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--aqua), var(--gold));
+  box-shadow: 0 0 14px rgba(64, 214, 208, 0.42);
+}
+
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 18px;
-  margin-bottom: 22px;
   padding: 16px 18px;
   border-radius: 999px;
   background: rgba(6, 12, 22, 0.68);
@@ -139,6 +205,30 @@ button {
 .brand-lockup strong {
   display: block;
   font-size: 1rem;
+}
+
+.brand-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.brand-copy-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f9fcff;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.24), rgba(64, 214, 208, 0.24));
+  border: 1px solid rgba(151, 176, 214, 0.18);
 }
 
 .brand-lockup p,
@@ -165,6 +255,10 @@ button {
   background: linear-gradient(145deg, rgba(124, 92, 255, 0.28), rgba(64, 214, 208, 0.2));
   border: 1px solid rgba(151, 176, 214, 0.16);
   overflow: hidden;
+}
+
+.brand-mark-orbit {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 24px rgba(6, 12, 22, 0.28);
 }
 
 .brand-mark span {
@@ -194,6 +288,13 @@ button {
   transform: rotate(-35deg);
 }
 
+.brand-mark-orbit span:nth-child(4) {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  animation: orbitPulse 3.4s ease-in-out infinite;
+}
+
 .topbar-chip {
   padding: 10px 14px;
   border-radius: 16px;
@@ -209,6 +310,20 @@ button {
 
 .topbar-chip.subtle {
   background: rgba(9, 17, 30, 0.7);
+}
+
+.topbar-chip-pulse {
+  position: relative;
+  overflow: hidden;
+}
+
+.topbar-chip-pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transform: translateX(-140%);
+  animation: chipSweep 2.8s ease-in-out infinite;
 }
 
 .topbar-button {
@@ -1634,6 +1749,36 @@ button:active {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes tickerSlide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes orbitPulse {
+  0%,
+  100% {
+    transform: scale(0.86);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.95;
+  }
+}
+
+@keyframes chipSweep {
+  0% {
+    transform: translateX(-140%);
+  }
+  100% {
+    transform: translateX(140%);
   }
 }
 
