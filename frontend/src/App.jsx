@@ -898,24 +898,50 @@ export default function App() {
             <span>Hire with clarity</span>
             <span>Deliver with proof</span>
           </div>
-          <span className="eyebrow">Built for high-tempo freelance work</span>
-          <h1>Run your freelance marketplace like a performance product, not a messy inbox.</h1>
-          <p>
-            A sharper workflow for clients and freelancers who want faster hiring, cleaner communication, and live delivery visibility from the first brief to the final handoff.
-          </p>
+          <div className="hero-heading-stack">
+            <span className="eyebrow">Built for high-tempo freelance work</span>
+            <h1>Run your freelance marketplace like a premium operating system for work.</h1>
+            <p>
+              A more elevated workflow for clients and freelancers who want faster hiring, cleaner communication, and visible delivery momentum from the first brief to the final handoff.
+            </p>
+          </div>
+          <div className="hero-intelligence-strip" aria-hidden="true">
+            <div className="hero-intelligence-item">
+              <span className="intelligence-dot" />
+              <div>
+                <small>Client control</small>
+                <strong>Private task boards</strong>
+              </div>
+            </div>
+            <div className="hero-intelligence-item">
+              <span className="intelligence-dot warm" />
+              <div>
+                <small>Live sync</small>
+                <strong>Progress and chat linked</strong>
+              </div>
+            </div>
+            <div className="hero-intelligence-item">
+              <span className="intelligence-dot lime" />
+              <div>
+                <small>Delivery proof</small>
+                <strong>Accepted work stays visible</strong>
+              </div>
+            </div>
+          </div>
           <div className="hero-kicker-stack">
             <div className="hero-kicker-card hero-kicker-primary">
               <span className="mini-eyebrow">Brand promise</span>
-              <strong>One platform for posting, matching, tracking, and shipping work.</strong>
+              <strong>One command center for posting, matching, tracking, and shipping work.</strong>
             </div>
             <div className="hero-kicker-card">
               <span className="mini-eyebrow">Experience</span>
-              <strong>Bold, focused, and ready for real production teams.</strong>
+              <strong>Sharper hierarchy, richer motion, and cleaner delivery focus.</strong>
             </div>
           </div>
           <div className="hero-motion-cluster" aria-hidden="true">
             <div className="motion-board">
               <div className="motion-board-glow" />
+              <div className="motion-grid-overlay" />
               <div className="motion-badge badge-top">
                 <span className="badge-dot" />
                 <strong>3 live applications</strong>
@@ -942,9 +968,11 @@ export default function App() {
               </div>
               <div className="orbit orbit-one" />
               <div className="orbit orbit-two" />
+              <div className="luxury-orbit orbit-three" />
               <div className="signal-node node-one" />
               <div className="signal-node node-two" />
               <div className="signal-node node-three" />
+              <div className="signal-node node-four" />
             </div>
             <div className="hero-status-strip">
               <div>
@@ -962,10 +990,10 @@ export default function App() {
             <p>{selectedAudience === 'CLIENT' ? 'The content below is highlighting the client-side workflow.' : 'The content below is highlighting the freelancer-side workflow.'}</p>
           </div>
           <div className="hero-metrics-grid">
-            <div className="hero-metric-card">
+            <div className="hero-metric-card hero-metric-wide">
               <span className="mini-eyebrow">Response speed</span>
-              <strong>Under one board</strong>
-              <p>Tasks, proposals, chat, and progress stay connected instead of scattered across tools.</p>
+              <strong>Everything under one premium board</strong>
+              <p>Tasks, proposals, chat, and progress stay connected instead of scattered across separate tools and tabs.</p>
             </div>
             <div className="hero-metric-card">
               <span className="mini-eyebrow">Visibility</span>
@@ -986,14 +1014,17 @@ export default function App() {
             </div>
             <div className="hero-points">
               <div>
+                <span className="hero-point-icon">01</span>
                 <strong>Post and manage tasks</strong>
                 <span>Create briefs, track budget, and keep your own task board organized.</span>
               </div>
               <div>
+                <span className="hero-point-icon">02</span>
                 <strong>Review freelancer interest</strong>
                 <span>See who applied, compare proposals, and accept the right freelancer.</span>
               </div>
               <div>
+                <span className="hero-point-icon">03</span>
                 <strong>Track delivery progress</strong>
                 <span>Watch accepted tasks move from active work into completed delivery.</span>
               </div>
@@ -1005,6 +1036,8 @@ export default function App() {
           <div className="illustration-card">
             <div className="hero-illustration" aria-hidden="true">
               <div className="scene-glow" />
+              <div className="scene-ring scene-ring-one" />
+              <div className="scene-ring scene-ring-two" />
               <div className="task-cloud task-cloud-one">
                 <span>New task</span>
                 <strong>Landing page redesign</strong>
@@ -1041,8 +1074,8 @@ export default function App() {
           </div>
           <div className="showcase-card showcase-premium-banner">
             <span className="eyebrow">Marketplace identity</span>
-            <strong>Professional by default. Dynamic when it matters.</strong>
-            <p>Designed to feel like a premium workflow product with live movement, strong hierarchy, and cleaner operational focus.</p>
+            <strong>Professional by default. Dynamic when it matters. Premium when it opens.</strong>
+            <p>Designed to feel like a polished workflow product with richer motion, stronger hierarchy, and a more intentional operating rhythm.</p>
           </div>
           <div className="showcase-card showcase-primary">
             <span className="eyebrow">Workflow</span>
@@ -1074,15 +1107,15 @@ export default function App() {
           <div className="showcase-grid">
             <div className="showcase-card">
               <span className="metric">Clients</span>
-              <small>Create and manage only their own tasks and incoming applications.</small>
+              <small>Create, review, and control only their own workstream with total clarity.</small>
             </div>
             <div className="showcase-card">
               <span className="metric">Freelancers</span>
-              <small>See all active opportunities, apply, and update exact delivery progress.</small>
+              <small>See open opportunities, apply with confidence, and show exact delivery momentum.</small>
             </div>
             <div className="showcase-card wide">
-              <strong>Built around real task flow.</strong>
-              <p>Everything here is connected to posting work, accepting applications, and tracking completion from start to finish.</p>
+              <strong>Built around the full execution journey.</strong>
+              <p>Everything here is connected to posting work, accepting applications, live collaboration, and tracking completion from start to finish.</p>
             </div>
           </div>
           <div className="floating-objects" aria-hidden="true">
