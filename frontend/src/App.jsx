@@ -271,7 +271,8 @@ function AppHeader({ token, role, email, onLogout }) {
 
       <div className="topbar">
         <div className="brand-lockup">
-          <div className="brand-mark brand-mark-orbit" aria-hidden="true">
+          <div className="brand-mark brand-mark-orbit brand-mark-premium" aria-hidden="true">
+            <span />
             <span />
             <span />
             <span />
@@ -287,12 +288,12 @@ function AppHeader({ token, role, email, onLogout }) {
         </div>
 
         <div className="topbar-actions">
-          <div className="topbar-chip">
-            <span className="chip-label">Mode</span>
-            <strong>{roleLabel(role)}</strong>
-          </div>
           {token ? (
             <>
+              <div className="topbar-chip">
+                <span className="chip-label">Workspace</span>
+                <strong>{roleLabel(role)}</strong>
+              </div>
               <div className="topbar-chip subtle">
                 <span className="chip-label">Signed in as</span>
                 <strong>{email || 'workspace@marketplace'}</strong>
@@ -300,16 +301,29 @@ function AppHeader({ token, role, email, onLogout }) {
               <button type="button" className="ghost-button topbar-button" onClick={onLogout}>Logout</button>
             </>
           ) : (
-            <>
-              <div className="topbar-chip subtle">
-                <span className="chip-label">Status</span>
-                <strong>Guest View</strong>
+            <div className="brand-live-panel" aria-hidden="true">
+              <div className="brand-live-cluster">
+                <div className="brand-mini-logo">
+                  <span className="mini-logo-ring" />
+                  <span className="mini-logo-core" />
+                  <span className="mini-logo-core mini-logo-core-two" />
+                </div>
+                <div className="brand-live-copy">
+                  <span className="chip-label">Live network</span>
+                  <strong>Clients and freelancers active</strong>
+                </div>
               </div>
-              <div className="topbar-chip subtle topbar-chip-pulse">
-                <span className="chip-label">Brand</span>
-                <strong>Marketplace in Motion</strong>
+
+              <div className="topbar-chip subtle topbar-chip-signal">
+                <span className="chip-label">Marketplace pulse</span>
+                <strong>Briefs, bids, delivery</strong>
               </div>
-            </>
+
+              <div className="topbar-chip subtle topbar-chip-activity">
+                <span className="chip-label">Now running</span>
+                <strong>Real-time workflow sync</strong>
+              </div>
+            </div>
           )}
         </div>
       </div>
