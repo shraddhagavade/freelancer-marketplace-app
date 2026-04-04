@@ -108,6 +108,83 @@ function FieldError({ message }) {
   return <p className="field-error">{message}</p>;
 }
 
+function normalizeFullName(value) {
+  return value
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(' ');
+}
+
+function isStrongPassword(value) {
+  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/.test(value);
+}
+
+function validateRegisterForm(form) {
+  const errors = {};
+  const normalizedName = normalizeFullName(form.fullName || '');
+  const normalizedEmail = (form.email || '').trim().toLowerCase();
+
+  if (!normalizedName) {
+    errors.fullName = 'Full name cannot be blank.';
+  } else if (normalizedName.split(' ').length < 2) {
+    errors.fullName = 'Enter first name and last name.';
+  }
+
+  if (!normalizedEmail) {
+    errors.email = 'Email cannot be blank.';
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    errors.email = 'Enter a valid email address.';
+  }
+
+  if (!form.password) {
+    errors.password = 'Password cannot be blank.';
+  } else if (!isStrongPassword(form.password)) {
+    errors.password = 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.';
+  }
+
+  if (!form.confirmPassword) {
+    errors.confirmPassword = 'Confirm password cannot be blank.';
+  } else if (form.password !== form.confirmPassword) {
+    errors.confirmPassword = 'Passwords do not match.';
+  }
+
+  if (!form.role) {
+    errors.role = 'Please choose a role.';
+  }
+
+  return { errors, normalizedName, normalizedEmail };
+}
+
+function validateLoginForm(form) {
+  const errors = {};
+  if (!form.email.trim()) {
+    errors.email = 'Email cannot be blank.';
+  }
+  if (!form.password) {
+    errors.password = 'Password cannot be blank.';
+  }
+  return errors;
+}
+
+function validateResetForm(form) {
+  const errors = {};
+  if (!form.newPassword) {
+    errors.newPassword = 'Password cannot be blank.';
+  } else if (!isStrongPassword(form.newPassword)) {
+    errors.newPassword = 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.';
+  }
+
+  if (!form.confirmPassword) {
+    errors.confirmPassword = 'Confirm password cannot be blank.';
+  } else if (form.newPassword !== form.confirmPassword) {
+    errors.confirmPassword = 'Passwords do not match.';
+  }
+
+  return errors;
+}
+
 function TaskConversation({ task, currentUserEmail, messages, draft, loading, sending, onDraftChange, onSend }) {
   const items = Array.isArray(messages) ? messages : [];
 
@@ -274,7 +351,9 @@ export default function App() {
 
   function mapAuthError(message, fallbackField = 'password') {
     const text = (message || '').toLowerCase();
+    if (text.includes('full name') || text.includes('name')) return { fullName: message };
     if (text.includes('email')) return { email: message };
+    if (text.includes('confirm password')) return { confirmPassword: message };
     if (text.includes('password')) return { [fallbackField]: message };
     return { [fallbackField]: message || 'Something went wrong. Please try again.' };
   }
@@ -458,14 +537,15 @@ export default function App() {
     event.preventDefault();
     clearAuthFeedback();
 
-    if (registerForm.password !== registerForm.confirmPassword) {
-      setRegisterErrors({ confirmPassword: 'Passwords do not match.' });
+    const { errors, normalizedName, normalizedEmail } = validateRegisterForm(registerForm);
+    if (Object.keys(errors).length) {
+      setRegisterErrors(errors);
       return;
     }
 
     const response = await register({
-      fullName: registerForm.fullName,
-      email: normalizeEmail(registerForm.email),
+      fullName: normalizedName,
+      email: normalizedEmail,
       password: registerForm.password,
       role: registerForm.role
     });
@@ -489,6 +569,12 @@ export default function App() {
   async function handleLogin(event) {
     event.preventDefault();
     clearAuthFeedback();
+
+    const errors = validateLoginForm(loginForm);
+    if (Object.keys(errors).length) {
+      setLoginErrors(errors);
+      return;
+    }
 
     const response = await login({ ...loginForm, email: normalizeEmail(loginForm.email) });
 
@@ -529,8 +615,9 @@ export default function App() {
     event.preventDefault();
     clearAuthFeedback();
 
-    if (resetForm.newPassword !== resetForm.confirmPassword) {
-      setResetErrors({ confirmPassword: 'Passwords do not match.' });
+    const errors = validateResetForm(resetForm);
+    if (Object.keys(errors).length) {
+      setResetErrors(errors);
       return;
     }
 
@@ -712,7 +799,12 @@ export default function App() {
       <form onSubmit={handleRegister} className="card auth-card">
         <span className="eyebrow">Create account</span>
         <h2>Start as client or freelancer</h2>
-        <input placeholder="Full name" value={registerForm.fullName} onChange={(e) => setRegisterForm({ ...registerForm, fullName: e.target.value })} />
+        <input
+          placeholder="Full name"
+          value={registerForm.fullName}
+          onChange={(e) => setRegisterForm({ ...registerForm, fullName: e.target.value })}
+          onBlur={() => setRegisterForm((current) => ({ ...current, fullName: normalizeFullName(current.fullName) }))}
+        />
         <FieldError message={registerErrors.fullName} />
         <input placeholder="Email" value={registerForm.email} onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })} />
         <FieldError message={registerErrors.email} />
@@ -724,6 +816,7 @@ export default function App() {
           <option value="CLIENT">CLIENT</option>
           <option value="FREELANCER">FREELANCER</option>
         </select>
+        <FieldError message={registerErrors.role} />
         <button type="submit">Create Workspace</button>
       </form>
 

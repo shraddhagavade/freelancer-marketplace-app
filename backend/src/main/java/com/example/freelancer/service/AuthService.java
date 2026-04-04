@@ -56,7 +56,7 @@ public class AuthService {
         }
         User user = User.builder()
                 .id(UUID.randomUUID())
-                .fullName(req.fullName())
+                .fullName(normalizeFullName(req.fullName()))
                 .email(normalizedEmail)
                 .passwordHash(passwordEncoder.encode(req.password()))
                 .role(req.role())
@@ -110,6 +110,18 @@ public class AuthService {
 
     private String normalizeEmail(String email) {
         return email == null ? null : email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private String normalizeFullName(String fullName) {
+        if (fullName == null || fullName.isBlank()) {
+            return fullName;
+        }
+
+        return java.util.Arrays.stream(fullName.trim().split("\\s+"))
+                .filter(part -> !part.isBlank())
+                .map(part -> part.substring(0, 1).toUpperCase(Locale.ROOT) + part.substring(1).toLowerCase(Locale.ROOT))
+                .reduce((first, second) -> first + " " + second)
+                .orElse(fullName.trim());
     }
 
     private void createAndSendPasswordResetToken(User user) {
