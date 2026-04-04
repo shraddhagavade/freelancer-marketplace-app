@@ -1336,18 +1336,46 @@ export default function App() {
   const clientView = (
     <>
       <section className="dashboard-hero client">
-        <div>
+        <div className="client-hero-copy">
+          <div className="client-hero-marquee" aria-hidden="true">
+            <span>Board intelligence</span>
+            <span>Live freelancer sync</span>
+            <span>Premium delivery visibility</span>
+          </div>
           <span className="eyebrow">Client control room</span>
-          <h1>See your freelance delivery pipeline at a glance.</h1>
+          <h1>See your freelance delivery pipeline like a premium execution board.</h1>
           <p>
-            Post tasks, watch active briefs move through execution, and keep a sharper handle on budget and delivery pace.
+            Post tasks, monitor accepted work, and keep your budget, approvals, and delivery movement aligned inside one sharper client cockpit.
           </p>
+          <div className="client-hero-ribbon">
+            <div className="client-ribbon-card">
+              <small>Execution lane</small>
+              <strong>{clientLiveDeliveries.length} active deliveries</strong>
+            </div>
+            <div className="client-ribbon-card">
+              <small>Response lane</small>
+              <strong>{pendingClientApplications.length} pending approvals</strong>
+            </div>
+            <div className="client-ribbon-card">
+              <small>Budget view</small>
+              <strong>{formatCurrency(clientPortfolio.reduce((sum, task) => sum + Number(task.budget || 0), 0))}</strong>
+            </div>
+          </div>
         </div>
-        <div className="identity-card">
-          <span className="role-pill">{role}</span>
-          <strong>{email || 'client@workspace'}</strong>
-          <p>{clientPortfolio.length} briefs in your visible board</p>
-          <div className="signal-grid">
+        <div className="identity-card client-identity-card">
+          <div className="client-identity-top">
+            <div>
+              <span className="role-pill">{role}</span>
+              <strong>{email || 'client@workspace'}</strong>
+              <p>{clientPortfolio.length} briefs in your visible board</p>
+            </div>
+            <div className="client-hero-orbit" aria-hidden="true">
+              <span className="client-orbit-ring ring-one" />
+              <span className="client-orbit-ring ring-two" />
+              <span className="client-orbit-core" />
+            </div>
+          </div>
+          <div className="signal-grid client-signal-grid">
             <div className="signal-tile">
               <span>Accepted</span>
               <strong>{acceptedClientTasks.length}</strong>
@@ -1357,10 +1385,33 @@ export default function App() {
               <strong>{clientAverageProgress}%</strong>
             </div>
           </div>
+          <div className="client-command-rail" aria-hidden="true">
+            <div className="command-node">
+              <span className="command-dot" />
+              <div>
+                <small>Brief posted</small>
+                <strong>Client-side private board</strong>
+              </div>
+            </div>
+            <div className="command-node">
+              <span className="command-dot warm" />
+              <div>
+                <small>Accepted talent</small>
+                <strong>Freelancer updates linked</strong>
+              </div>
+            </div>
+            <div className="command-node">
+              <span className="command-dot lime" />
+              <div>
+                <small>Completion pace</small>
+                <strong>Progress visible in real time</strong>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="stat-grid">
+      <section className="stat-grid client-stat-grid">
         <DashboardStat label="Visible briefs" value={clientPortfolio.length} helper="Tasks currently on your board or in the marketplace snapshot." />
         <DashboardStat label="In progress" value={clientLiveDeliveries.length} helper="Work already underway with freelancers." />
         <DashboardStat label="Completed" value={clientCompletedDeliveries.length} helper="Delivered tasks ready for review or closeout." />
@@ -1368,16 +1419,16 @@ export default function App() {
       </section>
 
       {!!acceptedClientTasks.length && (
-        <section className="card acceptance-panel">
+        <section className="card acceptance-panel client-premium-panel">
           <div className="section-heading">
             <div>
               <span className="eyebrow">Client notifications</span>
               <h2>Accepted and active tasks</h2>
             </div>
           </div>
-          <div className="mini-stack">
+          <div className="mini-stack client-notification-stack">
             {acceptedClientTasks.map((task) => (
-              <div key={task.id} className="mini-card accent">
+              <div key={task.id} className="mini-card accent client-mini-card">
                 <strong>{task.title}</strong>
                 <p>{describeClientDelivery(task)}</p>
                 <span>{task.progressPercent ?? 0}% complete</span>
@@ -1389,16 +1440,16 @@ export default function App() {
       )}
 
       {!!pendingClientApplications.length && (
-        <section className="card acceptance-panel">
+        <section className="card acceptance-panel client-premium-panel">
           <div className="section-heading">
             <div>
               <span className="eyebrow">Client notifications</span>
               <h2>New freelancer responses</h2>
             </div>
           </div>
-          <div className="mini-stack">
+          <div className="mini-stack client-notification-stack">
             {pendingClientApplications.map((application) => (
-              <div key={application.id} className="mini-card">
+              <div key={application.id} className="mini-card client-mini-card">
                 <strong>{application.taskTitle}</strong>
                 <p>
                   <strong>{application.freelancerName}</strong> has accepted interest in this task and is waiting for your approval.
@@ -1413,7 +1464,7 @@ export default function App() {
       )}
 
       {!!clientLiveDeliveries.length && (
-        <section className="card acceptance-panel">
+        <section className="card acceptance-panel client-premium-panel">
           <div className="section-heading">
             <div>
               <span className="eyebrow">Live progress</span>
@@ -1422,7 +1473,7 @@ export default function App() {
           </div>
           <div className="project-stack client-progress-stack">
             {clientLiveDeliveries.map((task) => (
-              <article key={task.id} className="project-card client-progress-card">
+              <article key={task.id} className="project-card client-progress-card client-premium-project">
                 <div className="project-header">
                   <div>
                     <h3>{task.title}</h3>
@@ -1452,7 +1503,7 @@ export default function App() {
       )}
 
       <section className="dashboard-grid">
-        <form onSubmit={handleTaskCreate} className="card">
+        <form onSubmit={handleTaskCreate} className="card client-create-card">
           <div className="section-heading">
             <div>
               <span className="eyebrow">Create</span>
@@ -1465,7 +1516,7 @@ export default function App() {
           <button type="submit">Publish Task</button>
         </form>
 
-        <article className="card panel-wide">
+        <article className="card panel-wide client-board-card">
           <div className="section-heading">
             <div>
               <span className="eyebrow">Portfolio</span>
@@ -1475,7 +1526,7 @@ export default function App() {
           </div>
           <div className="project-stack">
             {clientPortfolio.map((task) => (
-              <article key={task.id} className="project-card">
+              <article key={task.id} className="project-card client-project-card">
                 <div className="project-header">
                   <div>
                     <h3>{task.title}</h3>
@@ -1526,7 +1577,7 @@ export default function App() {
           </div>
         </article>
 
-        <article className="card">
+        <article className="card client-notes-card">
           <div className="section-heading">
             <div>
               <span className="eyebrow">Live snapshot</span>

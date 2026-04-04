@@ -1730,8 +1730,9 @@ button:active {
 
 .dashboard-hero.client {
   background:
-    radial-gradient(circle at top right, rgba(255, 122, 198, 0.16), transparent 30%),
-    linear-gradient(135deg, rgba(18, 24, 44, 0.96), rgba(10, 16, 30, 0.96));
+    radial-gradient(circle at top right, rgba(255, 204, 115, 0.14), transparent 28%),
+    radial-gradient(circle at left center, rgba(242, 75, 46, 0.12), transparent 26%),
+    linear-gradient(135deg, rgba(18, 16, 14, 0.98), rgba(10, 10, 10, 0.98));
 }
 
 .identity-card {
@@ -1758,6 +1759,152 @@ button:active {
 .role-pill {
   color: #d9d1ff;
   background: rgba(124, 92, 255, 0.18);
+}
+
+.client-hero-copy {
+  display: grid;
+  gap: 16px;
+}
+
+.client-hero-marquee {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.client-hero-marquee span {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(245, 241, 232, 0.05);
+  border: 1px solid rgba(245, 241, 232, 0.08);
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.client-hero-ribbon {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.client-ribbon-card {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(245, 241, 232, 0.08);
+  background:
+    linear-gradient(180deg, rgba(24, 24, 24, 0.96), rgba(10, 10, 10, 0.96));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.client-ribbon-card small,
+.command-node small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.client-ribbon-card strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+}
+
+.client-identity-card {
+  background:
+    radial-gradient(circle at top right, rgba(255, 204, 115, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(24, 22, 19, 0.96), rgba(10, 10, 10, 0.96));
+}
+
+.client-identity-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.client-hero-orbit {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex: 0 0 auto;
+}
+
+.client-orbit-ring,
+.client-orbit-core {
+  position: absolute;
+  border-radius: 999px;
+}
+
+.client-orbit-ring {
+  inset: 0;
+  border: 1px solid rgba(245, 241, 232, 0.14);
+}
+
+.client-orbit-core {
+  width: 20px;
+  height: 20px;
+  top: 34px;
+  left: 34px;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  box-shadow: 0 0 18px rgba(242, 75, 46, 0.25);
+}
+
+.ring-one {
+  animation: slow-spin 12s linear infinite;
+}
+
+.ring-two {
+  inset: 12px;
+  border-color: rgba(195, 255, 82, 0.14);
+  animation: slow-spin 8s linear infinite reverse;
+}
+
+.client-signal-grid {
+  margin-top: 4px;
+}
+
+.client-command-rail {
+  display: grid;
+  gap: 12px;
+}
+
+.command-node {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(245, 241, 232, 0.08);
+}
+
+.command-dot {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--gold), var(--accent));
+  box-shadow: 0 0 0 8px rgba(242, 75, 46, 0.08);
+  animation: pulse-ring-node 2.8s ease-out infinite;
+}
+
+.command-dot.warm {
+  background: linear-gradient(135deg, #ff8450, var(--gold));
+}
+
+.command-dot.lime {
+  background: linear-gradient(135deg, var(--aqua), #fff6cd);
+}
+
+.command-node strong {
+  display: block;
+  font-size: 0.95rem;
 }
 
 .signal-grid {
@@ -1790,6 +1937,13 @@ button:active {
   margin-bottom: 22px;
 }
 
+.client-stat-grid .stat-card {
+  background:
+    radial-gradient(circle at top right, rgba(255, 204, 115, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(26, 24, 22, 0.95), rgba(10, 10, 10, 0.95));
+  border-color: rgba(245, 241, 232, 0.08);
+}
+
 .stat-card strong {
   display: block;
   font-size: 2rem;
@@ -1803,6 +1957,12 @@ button:active {
 
 .acceptance-panel {
   margin-bottom: 22px;
+}
+
+.client-premium-panel {
+  background:
+    radial-gradient(circle at top right, rgba(255, 204, 115, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(22, 20, 18, 0.96), rgba(9, 9, 9, 0.96));
 }
 
 .panel-wide {
@@ -1846,6 +2006,12 @@ button:active {
   background:
     radial-gradient(circle at top right, rgba(64, 214, 208, 0.12), transparent 32%),
     linear-gradient(180deg, rgba(16, 28, 46, 0.9), rgba(8, 16, 28, 0.9));
+}
+
+.client-premium-project {
+  background:
+    radial-gradient(circle at top right, rgba(255, 204, 115, 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(23, 21, 18, 0.94), rgba(10, 10, 10, 0.94));
 }
 
 .conversation-panel {
@@ -1936,6 +2102,27 @@ button:active {
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
+.client-project-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(255, 204, 115, 0.08), transparent 30%),
+    linear-gradient(180deg, rgba(22, 20, 17, 0.94), rgba(10, 10, 10, 0.94));
+}
+
+.client-project-card::before,
+.client-create-card::before,
+.client-board-card::before,
+.client-notes-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  transform: translateX(-130%);
+  animation: chipSweep 4.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
 .project-header,
 .project-meta,
 .button-row,
@@ -1969,6 +2156,25 @@ button:active {
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
+.client-mini-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(24, 22, 19, 0.94), rgba(10, 10, 10, 0.94));
+  border: 1px solid rgba(245, 241, 232, 0.08);
+}
+
+.client-mini-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -30% -40% auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 204, 115, 0.12), transparent 68%);
+  pointer-events: none;
+}
+
 .mini-card span {
   color: #d7c7ff;
   font-weight: 700;
@@ -1983,6 +2189,20 @@ button:active {
   background:
     linear-gradient(135deg, rgba(124, 92, 255, 0.18), rgba(64, 214, 208, 0.12)),
     rgba(12, 22, 37, 0.84);
+}
+
+.client-notification-stack {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.client-create-card,
+.client-board-card,
+.client-notes-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(255, 204, 115, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(22, 20, 17, 0.96), rgba(10, 10, 10, 0.96));
 }
 
 .empty-state {
@@ -2203,8 +2423,13 @@ button:active {
   }
 
   .hero-intelligence-strip,
-  .hero-kicker-stack {
+  .hero-kicker-stack,
+  .client-hero-ribbon {
     grid-template-columns: 1fr;
+  }
+
+  .client-identity-top {
+    flex-direction: column;
   }
 
   .illustration-card {
@@ -2267,8 +2492,22 @@ button:active {
   .showcase-grid,
   .hero-status-strip,
   .hero-intelligence-strip,
-  .hero-kicker-stack {
+  .hero-kicker-stack,
+  .client-hero-ribbon,
+  .client-notification-stack {
     grid-template-columns: 1fr;
+  }
+
+  .client-hero-orbit {
+    width: 70px;
+    height: 70px;
+  }
+
+  .client-orbit-core {
+    width: 16px;
+    height: 16px;
+    top: 27px;
+    left: 27px;
   }
 
   .hero-status-strip div:first-child {
