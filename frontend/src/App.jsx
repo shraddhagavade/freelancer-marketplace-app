@@ -1142,19 +1142,50 @@ export default function App() {
   const freelancerView = (
     <>
       <section className="dashboard-hero freelancer">
-        <div>
+        <div className="freelancer-hero-copy">
+          <div className="freelancer-hero-marquee" aria-hidden="true">
+            <span>Delivery studio</span>
+            <span>Proposal radar</span>
+            <span>Client sync active</span>
+          </div>
           <span className="eyebrow">Freelancer workspace</span>
-          <h1>Keep your client work moving with calm, visible progress.</h1>
+          <h1>Run your delivery pipeline like a professional studio, not a stack of tasks.</h1>
           <p>
-            Track accepted contracts, manage proposal momentum, and spot where your delivery energy should go next.
+            Track accepted contracts, manage proposal momentum, and decide where your delivery energy should go next with cleaner control and better live visibility.
           </p>
           <p className="support-text">Every newly posted client task is pulled into this marketplace board automatically.</p>
+          <div className="freelancer-hero-ribbon">
+            <div className="freelancer-ribbon-card">
+              <small>Active lanes</small>
+              <strong>{myActiveFreelancerProjects.length} in delivery</strong>
+            </div>
+            <div className="freelancer-ribbon-card">
+              <small>Pipeline</small>
+              <strong>{proposalTasks.length} proposals live</strong>
+            </div>
+            <div className="freelancer-ribbon-card">
+              <small>Average pace</small>
+              <strong>{freelancerAverageProgress}% completion</strong>
+            </div>
+          </div>
         </div>
-        <div className="identity-card">
-          <span className="role-pill">{role}</span>
-          <strong>{email || 'freelancer@workspace'}</strong>
-          <p>{myActiveFreelancerProjects.length} active delivery lanes</p>
-          <div className="signal-grid">
+        <div className="identity-card freelancer-identity-card">
+          <div className="freelancer-identity-top">
+            <div>
+              <span className="role-pill">{role}</span>
+              <strong>{email || 'freelancer@workspace'}</strong>
+              <p>{myActiveFreelancerProjects.length} active delivery lanes</p>
+            </div>
+            <div className="freelancer-hero-radar" aria-hidden="true">
+              <span className="freelancer-radar-ring ring-one" />
+              <span className="freelancer-radar-ring ring-two" />
+              <span className="freelancer-radar-ring ring-three" />
+              <span className="freelancer-radar-core" />
+              <span className="freelancer-radar-ping ping-one" />
+              <span className="freelancer-radar-ping ping-two" />
+            </div>
+          </div>
+          <div className="signal-grid freelancer-signal-grid">
             <div className="signal-tile">
               <span>Pipeline</span>
               <strong>{proposalTasks.length}</strong>
@@ -1164,10 +1195,33 @@ export default function App() {
               <strong>{myCompletedFreelancerProjects.length}</strong>
             </div>
           </div>
+          <div className="freelancer-command-rail" aria-hidden="true">
+            <div className="freelancer-command-node">
+              <span className="freelancer-command-dot" />
+              <div>
+                <small>Focus lane</small>
+                <strong>Accepted work prioritized</strong>
+              </div>
+            </div>
+            <div className="freelancer-command-node">
+              <span className="freelancer-command-dot warm" />
+              <div>
+                <small>Progress console</small>
+                <strong>Exact delivery updates</strong>
+              </div>
+            </div>
+            <div className="freelancer-command-node">
+              <span className="freelancer-command-dot lime" />
+              <div>
+                <small>Client channel</small>
+                <strong>Task chat always attached</strong>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="stat-grid">
+      <section className="stat-grid freelancer-stat-grid">
         <DashboardStat label="Active contracts" value={myActiveFreelancerProjects.length} helper="Accepted work currently in delivery." />
         <DashboardStat label="Completed tasks" value={myCompletedFreelancerProjects.length} helper="Work you have already wrapped up and delivered." />
         <DashboardStat label="Proposal pipeline" value={proposalTasks.length} helper="Opportunities you have already raised your hand for." />
@@ -1175,7 +1229,7 @@ export default function App() {
       </section>
 
       <section className="dashboard-grid">
-        <article className="card panel-wide">
+        <article className="card panel-wide freelancer-studio-card">
           <div className="section-heading">
             <div>
               <span className="eyebrow">Accepted work</span>
@@ -1184,9 +1238,9 @@ export default function App() {
           </div>
 
           {myActiveFreelancerProjects.length ? (
-            <div className="project-stack">
+            <div className="project-stack freelancer-project-stack">
               {myActiveFreelancerProjects.map((task) => (
-                <article key={task.id} className="project-card">
+                <article key={task.id} className="project-card freelancer-project-card">
                   <div className="project-header">
                     <div>
                       <h3>{task.title}</h3>
@@ -1194,43 +1248,57 @@ export default function App() {
                     </div>
                     <span className={`status-badge ${statusTone(task.status)}`}>{task.status.replace('_', ' ')}</span>
                   </div>
-                  <p className="project-copy">{task.description}</p>
-                  <div className="project-meta">
-                    <span>{formatCurrency(task.budget)}</span>
-                    <span>{task.progress}% complete</span>
-                  </div>
-                  <ProgressBar value={task.progress} />
-                  <form
-                    className="progress-editor"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      submitProgress(task.id);
-                    }}
-                  >
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="1"
-                      value={progressInputs[task.id] ?? task.progress}
-                      onChange={(event) =>
-                        setProgressInputs((current) => ({
-                          ...current,
-                          [task.id]: event.target.value
-                        }))
-                      }
-                    />
-                    <button type="submit" disabled={!!updatingTaskIds[task.id]}>
-                      {updatingTaskIds[task.id] ? 'Saving...' : 'Set Exact %'}
-                    </button>
-                  </form>
-                  <div className="button-row">
-                    <button type="button" className="ghost-button" disabled={!!updatingTaskIds[task.id]} onClick={() => adjustProgress(task.id, -5)}>
-                      Lower
-                    </button>
-                    <button type="button" disabled={!!updatingTaskIds[task.id]} onClick={() => adjustProgress(task.id, 5)}>
-                      {updatingTaskIds[task.id] ? 'Saving...' : 'Update Progress'}
-                    </button>
+                  <div className="freelancer-project-layout">
+                    <div className="freelancer-project-main">
+                      <p className="project-copy">{task.description}</p>
+                      <div className="project-meta">
+                        <span>{formatCurrency(task.budget)}</span>
+                        <span>{task.progress}% complete</span>
+                      </div>
+                      <ProgressBar value={task.progress} />
+                    </div>
+                    <aside className="freelancer-control-dock">
+                      <div className="freelancer-control-gauge" aria-hidden="true">
+                        <div className="freelancer-gauge-ring" style={{ '--gauge-progress': `${task.progress}%` }} />
+                        <strong>{task.progress}%</strong>
+                        <span>Delivery pace</span>
+                      </div>
+                      <form
+                        className="progress-editor freelancer-progress-editor"
+                        onSubmit={(event) => {
+                          event.preventDefault();
+                          submitProgress(task.id);
+                        }}
+                      >
+                        <label>
+                          <span className="mini-eyebrow">Exact progress</span>
+                          <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="1"
+                            value={progressInputs[task.id] ?? task.progress}
+                            onChange={(event) =>
+                              setProgressInputs((current) => ({
+                                ...current,
+                                [task.id]: event.target.value
+                              }))
+                            }
+                          />
+                        </label>
+                        <button type="submit" disabled={!!updatingTaskIds[task.id]}>
+                          {updatingTaskIds[task.id] ? 'Saving...' : 'Set Exact %'}
+                        </button>
+                      </form>
+                      <div className="button-row freelancer-button-row">
+                        <button type="button" className="ghost-button" disabled={!!updatingTaskIds[task.id]} onClick={() => adjustProgress(task.id, -5)}>
+                          Lower
+                        </button>
+                        <button type="button" disabled={!!updatingTaskIds[task.id]} onClick={() => adjustProgress(task.id, 5)}>
+                          {updatingTaskIds[task.id] ? 'Saving...' : 'Update Progress'}
+                        </button>
+                      </div>
+                    </aside>
                   </div>
                   <TaskConversation
                     task={task}
@@ -1253,7 +1321,7 @@ export default function App() {
           )}
         </article>
 
-        <article className="card">
+        <article className="card freelancer-delivered-card">
           <div className="section-heading">
             <div>
               <span className="eyebrow">Delivered</span>
@@ -1261,9 +1329,9 @@ export default function App() {
             </div>
           </div>
           {myCompletedFreelancerProjects.length ? (
-            <div className="mini-stack">
+            <div className="mini-stack freelancer-lane-grid">
               {myCompletedFreelancerProjects.map((task) => (
-                <div key={task.id} className="mini-card accent">
+                <div key={task.id} className="mini-card accent freelancer-mini-card freelancer-mini-card-success">
                   <strong>{task.title}</strong>
                   <span>{formatCurrency(task.budget)}</span>
                   <small>{task.clientLabel} | Completed</small>
@@ -1278,7 +1346,7 @@ export default function App() {
           )}
         </article>
 
-        <article className="card">
+        <article className="card freelancer-pipeline-card">
           <div className="section-heading">
             <div>
               <span className="eyebrow">Pipeline</span>
@@ -1286,9 +1354,9 @@ export default function App() {
             </div>
           </div>
           {proposalTasks.length ? (
-            <div className="mini-stack">
+            <div className="mini-stack freelancer-lane-grid">
               {proposalTasks.map((task) => (
-                <div key={task.id} className="mini-card">
+                <div key={task.id} className="mini-card freelancer-mini-card">
                   <strong>{task.title}</strong>
                   <span>{formatCurrency(task.budget)}</span>
                   <small>{task.clientName || 'Client workspace'} | Posted {formatPostedAt(task.createdAt)}</small>
@@ -1303,7 +1371,7 @@ export default function App() {
           )}
         </article>
 
-        <article className="card">
+        <article className="card freelancer-opportunity-card">
           <div className="section-heading">
             <div>
               <span className="eyebrow">Opportunity board</span>
@@ -1312,14 +1380,22 @@ export default function App() {
             <button className="ghost-button compact-button" onClick={() => refreshTasks(true)}>Refresh tasks</button>
           </div>
           <p className="support-text">Last synced: {lastUpdated || 'Just now'}</p>
-          <div className="mini-stack">
+          <div className="mini-stack freelancer-opportunity-grid">
             {openTasks.map((task) => (
-              <div key={task.id} className="mini-card">
-                <strong>{task.title}</strong>
-                <span>{formatCurrency(task.budget)}</span>
+              <div key={task.id} className="mini-card freelancer-mini-card freelancer-opportunity-tile">
+                <div className="freelancer-opportunity-top">
+                  <strong>{task.title}</strong>
+                  <span>{formatCurrency(task.budget)}</span>
+                </div>
                 <small>{task.clientName || 'Client workspace'} | Posted {formatPostedAt(task.createdAt)}</small>
                 <p>{task.description}</p>
-                <button onClick={() => handleApply(task.id)}>Apply</button>
+                <div className="freelancer-opportunity-footer">
+                  <div className="freelancer-opportunity-signal" aria-hidden="true">
+                    <span className="opportunity-dot" />
+                    Open for proposals
+                  </div>
+                  <button onClick={() => handleApply(task.id)}>Apply</button>
+                </div>
               </div>
             ))}
             {!openTasks.length && (

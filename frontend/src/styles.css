@@ -1724,8 +1724,9 @@ button:active {
 
 .dashboard-hero.freelancer {
   background:
-    radial-gradient(circle at top right, rgba(64, 214, 208, 0.18), transparent 30%),
-    linear-gradient(135deg, rgba(11, 25, 38, 0.96), rgba(7, 15, 29, 0.96));
+    radial-gradient(circle at top right, rgba(195, 255, 82, 0.14), transparent 26%),
+    radial-gradient(circle at left center, rgba(64, 214, 208, 0.12), transparent 28%),
+    linear-gradient(135deg, rgba(8, 18, 22, 0.98), rgba(6, 10, 12, 0.98));
 }
 
 .dashboard-hero.client {
@@ -1759,6 +1760,174 @@ button:active {
 .role-pill {
   color: #d9d1ff;
   background: rgba(124, 92, 255, 0.18);
+}
+
+.freelancer-hero-copy {
+  display: grid;
+  gap: 16px;
+}
+
+.freelancer-hero-marquee {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.freelancer-hero-marquee span {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(245, 241, 232, 0.05);
+  border: 1px solid rgba(245, 241, 232, 0.08);
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.freelancer-hero-ribbon {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.freelancer-ribbon-card {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(245, 241, 232, 0.08);
+  background:
+    linear-gradient(180deg, rgba(14, 20, 22, 0.95), rgba(8, 10, 10, 0.95));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.freelancer-ribbon-card small,
+.freelancer-command-node small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.freelancer-ribbon-card strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+}
+
+.freelancer-identity-card {
+  background:
+    radial-gradient(circle at top right, rgba(195, 255, 82, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(12, 21, 24, 0.96), rgba(6, 10, 11, 0.96));
+}
+
+.freelancer-identity-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.freelancer-hero-radar {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  flex: 0 0 auto;
+}
+
+.freelancer-radar-ring,
+.freelancer-radar-core,
+.freelancer-radar-ping {
+  position: absolute;
+  border-radius: 999px;
+}
+
+.freelancer-radar-ring {
+  inset: 0;
+  border: 1px solid rgba(195, 255, 82, 0.14);
+}
+
+.freelancer-radar-ring.ring-two {
+  inset: 14px;
+  border-color: rgba(255, 255, 255, 0.1);
+  animation: slow-spin 10s linear infinite reverse;
+}
+
+.freelancer-radar-ring.ring-three {
+  inset: 28px;
+  border-color: rgba(255, 204, 115, 0.12);
+  animation: slow-spin 6s linear infinite;
+}
+
+.freelancer-radar-core {
+  width: 16px;
+  height: 16px;
+  top: 40px;
+  left: 40px;
+  background: linear-gradient(135deg, var(--aqua), #f4ffe0);
+  box-shadow: 0 0 16px rgba(195, 255, 82, 0.3);
+}
+
+.freelancer-radar-ping {
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--accent));
+  box-shadow: 0 0 0 8px rgba(255, 204, 115, 0.08);
+}
+
+.ping-one {
+  top: 18px;
+  right: 16px;
+  animation: pulse-ring-node 2.7s ease-out infinite;
+}
+
+.ping-two {
+  bottom: 16px;
+  left: 18px;
+  animation: pulse-ring-node 2.7s ease-out infinite 1.1s;
+}
+
+.freelancer-signal-grid {
+  margin-top: 4px;
+}
+
+.freelancer-command-rail {
+  display: grid;
+  gap: 12px;
+}
+
+.freelancer-command-node {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(245, 241, 232, 0.08);
+}
+
+.freelancer-command-dot {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--aqua), #fff5cf);
+  box-shadow: 0 0 0 8px rgba(195, 255, 82, 0.08);
+  animation: pulse-ring-node 2.8s ease-out infinite;
+}
+
+.freelancer-command-dot.warm {
+  background: linear-gradient(135deg, #ff8450, var(--gold));
+}
+
+.freelancer-command-dot.lime {
+  background: linear-gradient(135deg, var(--aqua), #ffffff);
+}
+
+.freelancer-command-node strong {
+  display: block;
+  font-size: 0.95rem;
 }
 
 .client-hero-copy {
@@ -1937,6 +2106,13 @@ button:active {
   margin-bottom: 22px;
 }
 
+.freelancer-stat-grid .stat-card {
+  background:
+    radial-gradient(circle at top right, rgba(195, 255, 82, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(14, 18, 18, 0.96), rgba(8, 9, 10, 0.96));
+  border-color: rgba(245, 241, 232, 0.08);
+}
+
 .client-stat-grid .stat-card {
   background:
     radial-gradient(circle at top right, rgba(255, 204, 115, 0.08), transparent 34%),
@@ -1969,6 +2145,30 @@ button:active {
   min-width: 0;
 }
 
+.freelancer-studio-card,
+.freelancer-delivered-card,
+.freelancer-pipeline-card,
+.freelancer-opportunity-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(195, 255, 82, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(13, 18, 18, 0.96), rgba(7, 8, 9, 0.96));
+}
+
+.freelancer-studio-card::before,
+.freelancer-delivered-card::before,
+.freelancer-pipeline-card::before,
+.freelancer-opportunity-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  transform: translateX(-130%);
+  animation: chipSweep 4.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
 .section-heading {
   display: flex;
   align-items: center;
@@ -1992,6 +2192,10 @@ button:active {
 .mini-stack {
   display: grid;
   gap: 14px;
+}
+
+.freelancer-project-stack {
+  gap: 18px;
 }
 
 .embedded-stack {
@@ -2021,6 +2225,96 @@ button:active {
   border-radius: 18px;
   background: rgba(8, 16, 28, 0.66);
   border: 1px solid rgba(151, 176, 214, 0.12);
+}
+
+.freelancer-project-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(195, 255, 82, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(13, 19, 21, 0.95), rgba(7, 9, 10, 0.95));
+}
+
+.freelancer-project-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.34), transparent 82%);
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.freelancer-project-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(220px, 0.75fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.freelancer-project-main {
+  display: grid;
+  gap: 14px;
+}
+
+.freelancer-control-dock {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(245, 241, 232, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.freelancer-control-gauge {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.freelancer-gauge-ring {
+  --gauge-progress: 0%;
+  width: 88px;
+  height: 88px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at center, rgba(10, 10, 10, 0.95) 56%, transparent 58%),
+    conic-gradient(var(--aqua) 0 var(--gauge-progress), rgba(255, 255, 255, 0.08) var(--gauge-progress) 100%);
+  box-shadow: inset 0 0 0 1px rgba(245, 241, 232, 0.08);
+}
+
+.freelancer-control-gauge strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.35rem;
+}
+
+.freelancer-control-gauge span {
+  color: var(--text-soft);
+  font-size: 0.84rem;
+}
+
+.freelancer-progress-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.freelancer-progress-editor label {
+  display: grid;
+  gap: 8px;
+}
+
+.freelancer-progress-editor input {
+  max-width: none;
+}
+
+.freelancer-button-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .conversation-header {
@@ -2154,6 +2448,57 @@ button:active {
   display: grid;
   gap: 8px;
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.freelancer-mini-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(195, 255, 82, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(14, 18, 19, 0.95), rgba(8, 9, 10, 0.95));
+  border: 1px solid rgba(245, 241, 232, 0.08);
+}
+
+.freelancer-mini-card-success {
+  background:
+    radial-gradient(circle at top right, rgba(255, 204, 115, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(17, 22, 18, 0.95), rgba(8, 10, 9, 0.95));
+}
+
+.freelancer-lane-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.freelancer-opportunity-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.freelancer-opportunity-tile {
+  gap: 12px;
+}
+
+.freelancer-opportunity-top,
+.freelancer-opportunity-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.freelancer-opportunity-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-soft);
+  font-size: 0.84rem;
+}
+
+.opportunity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--aqua), #ffffff);
+  box-shadow: 0 0 0 6px rgba(195, 255, 82, 0.08);
 }
 
 .client-mini-card {
@@ -2424,11 +2769,14 @@ button:active {
 
   .hero-intelligence-strip,
   .hero-kicker-stack,
-  .client-hero-ribbon {
+  .client-hero-ribbon,
+  .freelancer-hero-ribbon,
+  .freelancer-project-layout {
     grid-template-columns: 1fr;
   }
 
-  .client-identity-top {
+  .client-identity-top,
+  .freelancer-identity-top {
     flex-direction: column;
   }
 
@@ -2494,7 +2842,11 @@ button:active {
   .hero-intelligence-strip,
   .hero-kicker-stack,
   .client-hero-ribbon,
-  .client-notification-stack {
+  .client-notification-stack,
+  .freelancer-hero-ribbon,
+  .freelancer-lane-grid,
+  .freelancer-opportunity-grid,
+  .freelancer-button-row {
     grid-template-columns: 1fr;
   }
 
@@ -2508,6 +2860,18 @@ button:active {
     height: 16px;
     top: 27px;
     left: 27px;
+  }
+
+  .freelancer-hero-radar {
+    width: 76px;
+    height: 76px;
+  }
+
+  .freelancer-radar-core {
+    width: 14px;
+    height: 14px;
+    top: 31px;
+    left: 31px;
   }
 
   .hero-status-strip div:first-child {
@@ -2579,5 +2943,11 @@ button:active {
 
   .topbar-chip {
     width: 100%;
+  }
+
+  .freelancer-opportunity-top,
+  .freelancer-opportunity-footer {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
