@@ -352,6 +352,7 @@ export default function App() {
   function mapAuthError(message, fallbackField = 'password') {
     const text = (message || '').toLowerCase();
     if (text.includes('full name') || text.includes('name')) return { fullName: message };
+    if (text.includes('already exists') || text.includes('already registered')) return { email: message };
     if (text.includes('email')) return { email: message };
     if (text.includes('confirm password')) return { confirmPassword: message };
     if (text.includes('password')) return { [fallbackField]: message };
@@ -818,6 +819,7 @@ export default function App() {
         </select>
         <FieldError message={registerErrors.role} />
         <button type="submit">Create Workspace</button>
+        <p className="support-text">Already registered? Use the login form on the right with your email as the primary account ID.</p>
       </form>
 
       <form onSubmit={handleLogin} className="card auth-card auth-card-dark">

@@ -52,7 +52,7 @@ public class AuthService {
     public AuthResponse register(RegisterRequest req) {
         String normalizedEmail = normalizeEmail(req.email());
         if (userRepository.findByEmail(normalizedEmail).isPresent()) {
-            throw new BadRequestException("Email already registered");
+            throw new BadRequestException("An account with this email already exists. If you already have an account, please log in.");
         }
         User user = User.builder()
                 .id(UUID.randomUUID())
