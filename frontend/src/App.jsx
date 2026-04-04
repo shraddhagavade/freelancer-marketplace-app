@@ -380,11 +380,11 @@ function getResetTokenFromUrl() {
 
 function AppHeader({ token, role, email, onLogout }) {
   const brandStream = [
-    'Client briefs live',
-    'Freelancer proposals moving',
-    'Progress updates synced',
-    'Task chat connected',
-    'Payments and delivery aligned'
+    'Ink wash interface',
+    'Verified delivery flow',
+    'Client and talent sync',
+    'Secure release workflow',
+    'FreelanceX preview mode'
   ];
 
   return (
@@ -404,19 +404,20 @@ function AppHeader({ token, role, email, onLogout }) {
 
       <div className="topbar">
         <div className="brand-lockup">
-          <div className="brand-mark brand-mark-orbit brand-mark-premium" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
+          <div className="brand-mark brand-mark-freelancex" aria-hidden="true">
+            <span className="fx-stroke fx-stroke-left" />
+            <span className="fx-stroke fx-stroke-right" />
+            <span className="fx-core fx-core-one" />
+            <span className="fx-core fx-core-two" />
+            <span className="fx-orbit fx-orbit-one" />
+            <span className="fx-orbit fx-orbit-two" />
           </div>
           <div className="brand-copy">
             <div className="brand-copy-row">
-              <strong>Freelancer Marketplace</strong>
-              <span className="brand-badge">Flow OS</span>
+              <strong>FreelanceX</strong>
+              <span className="brand-badge">Ink Wash Preview</span>
             </div>
-            <p>Post tasks, manage applications, and track project delivery in one place.</p>
+            <p>Calmer interface, sharper trust cues, and one premium workspace for freelance delivery.</p>
           </div>
         </div>
 
@@ -442,19 +443,19 @@ function AppHeader({ token, role, email, onLogout }) {
                   <span className="mini-logo-core mini-logo-core-two" />
                 </div>
                 <div className="brand-live-copy">
-                  <span className="chip-label">Live network</span>
-                  <strong>Clients and freelancers active</strong>
+                  <span className="chip-label">Brand mood</span>
+                  <strong>Quiet, premium, professional</strong>
                 </div>
               </div>
 
               <div className="topbar-chip subtle topbar-chip-signal">
-                <span className="chip-label">Marketplace pulse</span>
-                <strong>Briefs, bids, delivery</strong>
+                <span className="chip-label">Wordmark</span>
+                <strong>FreelanceX in motion</strong>
               </div>
 
               <div className="topbar-chip subtle topbar-chip-activity">
-                <span className="chip-label">Now running</span>
-                <strong>Real-time workflow sync</strong>
+                <span className="chip-label">Palette</span>
+                <strong>Charcoal, cool gray, ivory, steel blue</strong>
               </div>
             </div>
           )}
@@ -1193,10 +1194,10 @@ export default function App() {
             <span>Deliver with proof</span>
           </div>
           <div className="hero-heading-stack">
-            <span className="eyebrow">Built for high-tempo freelance work</span>
-            <h1>Run your freelance marketplace like a premium operating system for work.</h1>
+            <span className="eyebrow">FreelanceX brand preview</span>
+            <h1>Try a quieter, more premium identity for your freelance product before you deploy it.</h1>
             <p>
-              A more elevated workflow for clients and freelancers who want faster hiring, cleaner communication, and visible delivery momentum from the first brief to the final handoff.
+              This concept leans into a softer ink-wash palette, calmer spacing, and a cleaner logo-first presence so the product feels more professional and brand-led.
             </p>
           </div>
           <div className="hero-intelligence-strip" aria-hidden="true">
@@ -1225,11 +1226,11 @@ export default function App() {
           <div className="hero-kicker-stack">
             <div className="hero-kicker-card hero-kicker-primary">
               <span className="mini-eyebrow">Brand promise</span>
-              <strong>One command center for posting, matching, tracking, and shipping work.</strong>
+              <strong>FreelanceX feels less noisy, more trusted, and more ready for serious client work.</strong>
             </div>
             <div className="hero-kicker-card">
               <span className="mini-eyebrow">Experience</span>
-              <strong>Sharper hierarchy, richer motion, and cleaner delivery focus.</strong>
+              <strong>A wordmark-led identity with calmer color energy and subtler motion.</strong>
             </div>
           </div>
           <div className="hero-motion-cluster" aria-hidden="true">
