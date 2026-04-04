@@ -2098,6 +2098,11 @@ button:active {
   gap: 16px;
 }
 
+.client-hero-caption {
+  display: grid;
+  gap: 8px;
+}
+
 .client-hero-marquee {
   display: flex;
   flex-wrap: wrap;
@@ -2115,6 +2120,151 @@ button:active {
   font-size: 0.76rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.client-visual-stage {
+  position: relative;
+  min-height: 260px;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(245, 241, 232, 0.08);
+  background:
+    radial-gradient(circle at top right, rgba(255, 204, 115, 0.12), transparent 24%),
+    radial-gradient(circle at left center, rgba(242, 75, 46, 0.12), transparent 28%),
+    linear-gradient(145deg, rgba(18, 16, 14, 0.98), rgba(9, 9, 9, 0.98));
+}
+
+.client-stage-glow {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  right: 8%;
+  top: 8%;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 204, 115, 0.16), rgba(255, 204, 115, 0) 72%);
+  filter: blur(10px);
+}
+
+.client-stage-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 86%);
+  opacity: 0.34;
+}
+
+.client-stage-card,
+.client-stage-chip {
+  position: absolute;
+  border: 1px solid rgba(245, 241, 232, 0.08);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+}
+
+.client-stage-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(18, 16, 14, 0.88);
+}
+
+.client-stage-card-main {
+  left: 22px;
+  bottom: 22px;
+  width: 250px;
+  animation: float-drift 5.8s ease-in-out infinite;
+}
+
+.client-stage-card-side {
+  right: 26px;
+  top: 30px;
+  width: 190px;
+  animation: float-drift 6.4s ease-in-out infinite 0.6s;
+}
+
+.client-stage-card strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.1rem;
+}
+
+.client-stage-bars {
+  display: grid;
+  gap: 8px;
+}
+
+.client-stage-bars span {
+  display: block;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 204, 115, 0.7), rgba(242, 75, 46, 0.16));
+}
+
+.client-stage-bars span:nth-child(1) {
+  width: 88%;
+}
+
+.client-stage-bars span:nth-child(2) {
+  width: 58%;
+}
+
+.client-stage-bars span:nth-child(3) {
+  width: 92%;
+}
+
+.client-stage-chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(22, 18, 16, 0.84);
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.client-chip-one {
+  left: 24px;
+  top: 26px;
+}
+
+.client-chip-two {
+  right: 28px;
+  bottom: 32px;
+}
+
+.client-chip-three {
+  left: 44%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+}
+
+.client-stage-node {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--gold), #fff1c9);
+  box-shadow: 0 0 0 8px rgba(255, 204, 115, 0.08);
+}
+
+.client-node-a {
+  left: 40%;
+  top: 28%;
+  animation: pulse-ring-node 2.7s ease-out infinite;
+}
+
+.client-node-b {
+  right: 28%;
+  top: 58%;
+  animation: pulse-ring-node 2.7s ease-out infinite 0.7s;
+}
+
+.client-node-c {
+  left: 62%;
+  bottom: 24%;
+  animation: pulse-ring-node 2.7s ease-out infinite 1.4s;
 }
 
 .client-hero-ribbon {
@@ -2151,6 +2301,19 @@ button:active {
   background:
     radial-gradient(circle at top right, rgba(255, 204, 115, 0.12), transparent 34%),
     linear-gradient(180deg, rgba(24, 22, 19, 0.96), rgba(10, 10, 10, 0.96));
+}
+
+.client-identity-card > .client-identity-top strong:first-of-type {
+  font-size: 1.3rem;
+  margin-top: 10px;
+}
+
+.client-identity-card > .client-identity-top strong:last-of-type {
+  display: block;
+  margin-top: 4px;
+  font-size: 1rem;
+  color: var(--text-soft);
+  font-weight: 600;
 }
 
 .client-identity-top {
@@ -2933,6 +3096,7 @@ button:active {
   .hero-intelligence-strip,
   .hero-kicker-stack,
   .client-hero-ribbon,
+  .client-visual-stage,
   .freelancer-hero-ribbon,
   .freelancer-project-layout {
     grid-template-columns: 1fr;
@@ -2943,6 +3107,7 @@ button:active {
     flex-direction: column;
   }
 
+  .client-visual-stage,
   .freelancer-visual-stage {
     min-height: 220px;
   }
@@ -3027,6 +3192,24 @@ button:active {
     height: 16px;
     top: 27px;
     left: 27px;
+  }
+
+  .client-stage-card-main,
+  .client-stage-card-side,
+  .client-chip-one,
+  .client-chip-two,
+  .client-chip-three {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    transform: none;
+  }
+
+  .client-stage-chip {
+    position: relative;
+    width: fit-content;
   }
 
   .freelancer-hero-radar {

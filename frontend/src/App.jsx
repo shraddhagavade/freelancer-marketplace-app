@@ -1450,11 +1450,35 @@ export default function App() {
             <span>Live freelancer sync</span>
             <span>Premium delivery visibility</span>
           </div>
-          <span className="eyebrow">Client control room</span>
-          <h1>See your freelance delivery pipeline like a premium execution board.</h1>
-          <p>
-            Post tasks, monitor accepted work, and keep your budget, approvals, and delivery movement aligned inside one sharper client cockpit.
-          </p>
+          <div className="client-visual-stage" aria-hidden="true">
+            <div className="client-stage-glow" />
+            <div className="client-stage-grid" />
+            <div className="client-stage-card client-stage-card-main">
+              <span className="mini-eyebrow">Client board</span>
+              <strong>Approved design sprint</strong>
+              <div className="client-stage-bars">
+                <span />
+                <span />
+                <span />
+              </div>
+            </div>
+            <div className="client-stage-card client-stage-card-side">
+              <span className="mini-eyebrow">Review lane</span>
+              <strong>{pendingClientApplications.length} waiting</strong>
+            </div>
+            <div className="client-stage-chip client-chip-one">Freelancer sync active</div>
+            <div className="client-stage-chip client-chip-two">Progress visible</div>
+            <div className="client-stage-chip client-chip-three">Brief accepted</div>
+            <span className="client-stage-node client-node-a" />
+            <span className="client-stage-node client-node-b" />
+            <span className="client-stage-node client-node-c" />
+          </div>
+          <div className="client-hero-caption">
+            <span className="eyebrow">Client control room</span>
+            <p>
+              Post tasks, monitor accepted work, and keep your budget, approvals, and delivery movement aligned inside one sharper client cockpit.
+            </p>
+          </div>
           <div className="client-hero-ribbon">
             <div className="client-ribbon-card">
               <small>Execution lane</small>
@@ -1474,6 +1498,7 @@ export default function App() {
           <div className="client-identity-top">
             <div>
               <span className="role-pill">{role}</span>
+              <strong>{fullName || 'Client workspace'}</strong>
               <strong>{email || 'client@workspace'}</strong>
               <p>{clientPortfolio.length} briefs in your visible board</p>
             </div>
