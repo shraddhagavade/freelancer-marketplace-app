@@ -1,25 +1,25 @@
 :root {
   color-scheme: dark;
-  --bg: #4a4a4a;
-  --bg-deep: #363636;
-  --surface: rgba(92, 92, 92, 0.26);
-  --surface-strong: rgba(84, 84, 84, 0.92);
-  --surface-soft: rgba(203, 203, 203, 0.12);
-  --surface-highlight: rgba(109, 129, 150, 0.24);
-  --text: #fffeef;
-  --text-soft: #d9d6cd;
-  --text-muted: #b8b3a8;
-  --line: rgba(255, 254, 239, 0.14);
-  --line-strong: rgba(255, 254, 239, 0.28);
-  --accent: #6d8196;
-  --accent-strong: #56687d;
-  --aqua: #fffe3f;
-  --cyan: #9fb0c2;
-  --pink: #d8d3c7;
-  --gold: #fffe3f;
-  --success: #dbe58a;
-  --danger: #d28a78;
-  --shadow: 0 28px 90px rgba(26, 26, 26, 0.26);
+  --bg: #0a0a0a;
+  --bg-deep: #020202;
+  --surface: rgba(17, 17, 17, 0.84);
+  --surface-strong: rgba(23, 23, 23, 0.96);
+  --surface-soft: rgba(28, 28, 28, 0.74);
+  --surface-highlight: rgba(38, 38, 38, 0.95);
+  --text: #f5f1e8;
+  --text-soft: #b9b0a0;
+  --text-muted: #8b8375;
+  --line: rgba(245, 241, 232, 0.14);
+  --line-strong: rgba(245, 241, 232, 0.26);
+  --accent: #f24b2e;
+  --accent-strong: #d63d22;
+  --aqua: #c3ff52;
+  --cyan: #ff8450;
+  --pink: #ff6b57;
+  --gold: #ffcc73;
+  --success: #92eb4a;
+  --danger: #ff7f68;
+  --shadow: 0 28px 90px rgba(0, 0, 0, 0.36);
   --radius-xl: 30px;
   --radius-lg: 24px;
   --radius-md: 18px;
@@ -41,10 +41,10 @@ body {
   font-family: "Segoe UI", "Trebuchet MS", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(255, 254, 239, 0.09), transparent 28%),
-    radial-gradient(circle at 82% 12%, rgba(109, 129, 150, 0.16), transparent 26%),
-    radial-gradient(circle at 24% 100%, rgba(203, 203, 203, 0.08), transparent 32%),
-    linear-gradient(180deg, #6d8196 0%, #4a4a4a 18%, #3f3f3f 58%, #363636 100%);
+    radial-gradient(circle at top left, rgba(242, 75, 46, 0.14), transparent 30%),
+    radial-gradient(circle at 82% 12%, rgba(195, 255, 82, 0.12), transparent 24%),
+    radial-gradient(circle at 30% 110%, rgba(255, 204, 115, 0.08), transparent 34%),
+    linear-gradient(180deg, #111111 0%, #080808 48%, #020202 100%);
 }
 
 button,
@@ -78,7 +78,7 @@ button {
   right: -60px;
   width: 360px;
   height: 360px;
-  background: rgba(255, 254, 239, 0.14);
+  background: rgba(124, 92, 255, 0.2);
 }
 
 .ambient-two {
@@ -86,7 +86,7 @@ button {
   bottom: 15%;
   width: 340px;
   height: 340px;
-  background: rgba(109, 129, 150, 0.18);
+  background: rgba(64, 214, 208, 0.14);
 }
 
 .ambient-three {
@@ -94,7 +94,7 @@ button {
   right: 20%;
   width: 220px;
   height: 220px;
-  background: rgba(203, 203, 203, 0.12);
+  background: rgba(255, 122, 198, 0.12);
 }
 
 .container {
@@ -126,7 +126,7 @@ button {
   overflow: hidden;
   padding: 11px 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(74, 74, 74, 0.94), rgba(109, 129, 150, 0.42), rgba(74, 74, 74, 0.94));
+  background: linear-gradient(90deg, rgba(17, 17, 17, 0.92), rgba(29, 22, 19, 0.85), rgba(17, 17, 17, 0.92));
   border: 1px solid rgba(151, 176, 214, 0.12);
   box-shadow: var(--shadow);
 }
@@ -189,7 +189,7 @@ button {
   gap: 18px;
   padding: 16px 18px;
   border-radius: 999px;
-  background: rgba(63, 63, 63, 0.68);
+  background: rgba(12, 12, 12, 0.72);
   border: 1px solid rgba(151, 176, 214, 0.12);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
@@ -226,8 +226,8 @@ button {
   font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #212121;
-  background: linear-gradient(135deg, rgba(255, 254, 63, 0.9), rgba(255, 254, 239, 0.82));
+  color: #f9fcff;
+  background: linear-gradient(135deg, rgba(242, 75, 46, 0.22), rgba(195, 255, 82, 0.18));
   border: 1px solid rgba(151, 176, 214, 0.18);
 }
 
@@ -247,74 +247,70 @@ button {
 
 .brand-mark {
   position: relative;
-  width: 58px;
-  height: 58px;
-  border-radius: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 15px;
   display: grid;
   place-items: center;
-  background:
-    radial-gradient(circle at 30% 25%, rgba(255, 254, 239, 0.2), transparent 34%),
-    linear-gradient(145deg, rgba(74, 74, 74, 0.92), rgba(109, 129, 150, 0.42));
-  border: 1px solid rgba(255, 254, 239, 0.16);
+  background: linear-gradient(145deg, rgba(242, 75, 46, 0.28), rgba(255, 204, 115, 0.16));
+  border: 1px solid rgba(151, 176, 214, 0.16);
   overflow: hidden;
 }
 
-.brand-mark-freelancex {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 34px rgba(32, 32, 32, 0.24);
+.brand-mark-orbit {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 24px rgba(6, 12, 22, 0.28);
 }
 
-.brand-mark-freelancex span {
+.brand-mark-premium {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 204, 115, 0.3), transparent 42%),
+    linear-gradient(145deg, rgba(242, 75, 46, 0.34), rgba(24, 24, 24, 0.24));
+}
+
+.brand-mark span {
   position: absolute;
-}
-
-.fx-stroke {
-  width: 30px;
-  height: 5px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(255, 254, 239, 0.96), rgba(109, 129, 150, 0.95));
-  box-shadow: 0 0 18px rgba(255, 254, 239, 0.16);
 }
 
-.fx-stroke-left {
-  transform: rotate(40deg) translate(-6px, -3px);
+.brand-mark span:nth-child(1) {
+  width: 25px;
+  height: 25px;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
 }
 
-.fx-stroke-right {
-  transform: rotate(-40deg) translate(6px, -3px);
+.brand-mark span:nth-child(2) {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, var(--gold), var(--aqua));
+  transform: translate(8px, 5px) rotate(32deg);
+  opacity: 0.95;
 }
 
-.fx-core {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  background: #fffeef;
+.brand-mark span:nth-child(3) {
+  width: 54px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  transform: rotate(-35deg);
 }
 
-.fx-core-one {
-  top: 17px;
-  left: 17px;
-}
-
-.fx-core-two {
-  right: 17px;
-  bottom: 17px;
-}
-
-.fx-orbit {
-  border-radius: 999px;
-  border: 1px solid rgba(255, 254, 239, 0.16);
-}
-
-.fx-orbit-one {
+.brand-mark-orbit span:nth-child(4) {
   width: 34px;
   height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   animation: orbitPulse 3.4s ease-in-out infinite;
 }
 
-.fx-orbit-two {
-  width: 48px;
-  height: 48px;
-  animation: orbitPulse 4.2s ease-in-out infinite reverse;
+.brand-mark-premium span:nth-child(5) {
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, var(--aqua), #ffffff);
+  box-shadow: 0 0 18px rgba(195, 255, 82, 0.4);
+  transform: translate(14px, -12px);
+  animation: premiumSpark 3.2s ease-in-out infinite;
 }
 
 .topbar-chip {
