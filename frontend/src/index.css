@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================================================
+   Kingbolt-inspired global styles (adapted from Volvo public-charging-fe)
+   Enterprise light theme: neutral surfaces, blue accent, crisp corners,
+   subtle dividers instead of heavy shadows, 14px base type.
+   ===================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-brand-canvas text-brand-ink font-sans;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0.1px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display text-brand-ink;
+    font-weight: 600;
+  }
+}
+
+@layer components {
+  /* ---- Buttons (crisp, small radius, blue primary) ---- */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+           bg-brand-primary text-white font-semibold text-sm
+           rounded transition-colors duration-200 ease-standard
+           hover:bg-brand-primaryDark
+           focus:outline-none focus:ring-2 focus:ring-brand-accentBorder
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+           bg-white text-brand-primary font-semibold text-sm
+           border border-brand-primary rounded
+           transition-colors duration-200 ease-standard
+           hover:bg-brand-hover
+           focus:outline-none focus:ring-2 focus:ring-brand-accentBorder
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+           bg-transparent text-brand-ink font-medium text-sm
+           rounded transition-colors duration-200 ease-standard
+           hover:bg-brand-hover;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+           bg-status-error text-white font-semibold text-sm
+           rounded transition-colors duration-200 ease-standard
+           hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* ---- Surfaces ---- */
+  .card {
+    @apply bg-white rounded-lg border border-grey-1
+           transition-shadow duration-200 ease-standard;
+  }
+
+  .card-hover {
+    @apply hover:shadow-card hover:border-brand-border;
+  }
+
+  /* Page shell (mirrors Kingbolt Page > Header > Body) */
+  .page {
+    @apply flex flex-col min-h-[calc(100vh-4rem)];
+  }
+
+  .page-header {
+    @apply flex items-center justify-between gap-4
+           px-6 md:px-12 lg:px-16 py-5
+           bg-white border-b border-brand-divider;
+  }
+
+  .page-title {
+    @apply text-page-title text-brand-ink;
+  }
+
+  .page-body {
+    @apply flex-1 px-6 md:px-12 lg:px-16 py-6;
+  }
+
+  /* Section container */
+  .section {
+    @apply max-w-content mx-auto px-6 md:px-12 lg:px-16;
+  }
+
+  /* ---- Form inputs ---- */
+  .input-field {
+    @apply w-full px-3 py-2.5 bg-white border border-brand-border
+           rounded text-sm text-brand-ink placeholder:text-brand-disabled
+           focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary
+           transition-colors duration-200;
+  }
+
+  .input-label {
+    @apply block text-sm font-medium text-brand-muted mb-1.5;
+  }
+
+  /* ---- Tags / chips ---- */
+  .tag {
+    @apply inline-flex items-center px-2.5 py-1
+           bg-brand-hover text-brand-primary text-xs font-medium
+           rounded border border-brand-accentBorder;
+  }
+
+  .tag-neutral {
+    @apply inline-flex items-center px-2.5 py-1
+           bg-grey-1 text-grey-8 text-xs font-medium rounded;
+  }
+
+  /* ---- Status indicators ---- */
+  .status-pill {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold;
+  }
+  .status-open      { @apply bg-blue-50 text-status-info; }
+  .status-progress  { @apply bg-amber-50 text-status-warning; }
+  .status-completed { @apply bg-green-50 text-status-success; }
+  .status-cancelled { @apply bg-red-50 text-status-error; }
+
+  /* ---- Data table (Kingbolt DataGrid feel) ---- */
+  .data-table {
+    @apply w-full border-collapse text-sm;
+  }
+  .data-table thead th {
+    @apply text-left font-semibold text-brand-muted text-xs uppercase tracking-wide
+           px-4 py-3 border-b border-brand-divider bg-white;
+  }
+  .data-table tbody td {
+    @apply px-4 py-3 border-b border-grey-1 text-brand-ink;
+  }
+  .data-table tbody tr {
+    @apply transition-colors hover:bg-brand-hover cursor-pointer;
+  }
+
+  /* Clickable/link text (Kingbolt blue link) */
+  .link {
+    @apply text-brand-primary hover:underline cursor-pointer;
+  }
+}
+
+/* Selection color */
+::selection {
+  background-color: #2A609D;
+  color: white;
+}
+
+/* Thin, subtle scrollbars for a clean enterprise feel */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #CCCCCC transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #CCCCCC;
+  border-radius: 4px;
+}
