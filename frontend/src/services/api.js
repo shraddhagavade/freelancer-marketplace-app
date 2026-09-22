@@ -1,7 +1,15 @@
 import axios from 'axios';
 
+// In dev, VITE_API_BASE_URL is unset → uses the Vite proxy ("/api").
+// In production, set VITE_API_BASE_URL to the backend origin, e.g.
+//   https://freelancer-marketplace-backend-xxxx.onrender.com
+// and requests go to "<that origin>/api".
+const API_BASE = import.meta.env.VITE_API_BASE_URL
+  ? `${import.meta.env.VITE_API_BASE_URL}/api`
+  : '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE,
   headers: {
     'Content-Type': 'application/json',
   },
