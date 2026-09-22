@@ -18,8 +18,8 @@ WORKDIR /app
 # Copy the built jar from the build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Render provides the PORT env var; Spring must listen on it
-ENV PORT=8080
+# Render injects its own PORT env var at runtime; Spring reads it via application.properties.
+# We do NOT hardcode PORT here so Render's value takes effect.
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT} -jar app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
