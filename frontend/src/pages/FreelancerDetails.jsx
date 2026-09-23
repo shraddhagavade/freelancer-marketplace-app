@@ -7,13 +7,16 @@ import {
   HiOutlineMail, HiOutlineX,
 } from 'react-icons/hi';
 import { getFreelancerById } from '../services/profileService';
+import { getFreelancerReviews } from '../services/reviewService';
 import { useAuth } from '../context/AuthContext';
 import Avatar from '../components/Avatar';
+import StarRating from '../components/StarRating';
 
 export default function FreelancerDetails() {
   const { id } = useParams();
   const { isAuthenticated } = useAuth();
   const [profile, setProfile] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showContact, setShowContact] = useState(false);
 
@@ -22,6 +25,10 @@ export default function FreelancerDetails() {
       try {
         const data = await getFreelancerById(id);
         setProfile(data);
+        // Reviews are keyed by the freelancer's USER id
+        if (data?.userId) {
+          getFreelancerReviews(data.userId).then(setReviews).catch(() => setReviews([]));
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -64,6 +71,12 @@ export default function FreelancerDetails() {
               <div>
                 <h1 className="text-2xl font-bold text-brand-ink">{profile.firstName} {profile.lastName}</h1>
                 <p className="text-brand-muted">{profile.title || 'Freelancer'}</p>
+                {profile.averageRating != null && (
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <StarRating value={profile.averageRating} size={16} showValue />
+                    <span className="text-xs text-brand-muted">({reviews.length} review{reviews.length !== 1 ? 's' : ''})</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -106,6 +119,44 @@ export default function FreelancerDetails() {
                     </a>
                   )}
                 </div>
+              </div>
+            )}
+          </div>
+
+          {/* Reviews */}
+          <div className="bg-white border border-gray-100 rounded-lg p-8">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-bold text-brand-ink">
+                Reviews {reviews.length > 0 && <span className="text-brand-muted font-normal">({reviews.length})</span>}
+              </h3>
+              {profile.averageRating != null && (
+                <StarRating value={profile.averageRating} size={18} showValue />
+              )}
+            </div>
+
+            {reviews.length === 0 ? (
+              <p className="text-sm text-brand-muted py-4 text-center">No reviews yet.</p>
+            ) : (
+              <div className="space-y-5">
+                {reviews.map((rev) => (
+                  <div key={rev.id} className="border-b border-gray-100 last:border-0 pb-5 last:pb-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <StarRating value={rev.rating} size={16} />
+                        <span className="text-sm font-semibold text-brand-ink">{rev.reviewerName}</span>
+                      </div>
+                      <span className="text-xs text-brand-muted">
+                        {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('en-IN') : ''}
+                      </span>
+                    </div>
+                    {rev.comment && (
+                      <p className="text-sm text-brand-muted leading-relaxed whitespace-pre-line">{rev.comment}</p>
+                    )}
+                    {rev.projectTitle && (
+                      <p className="text-xs text-brand-muted mt-1">Project: {rev.projectTitle}</p>
+                    )}
+                  </div>
+                ))}
               </div>
             )}
           </div>

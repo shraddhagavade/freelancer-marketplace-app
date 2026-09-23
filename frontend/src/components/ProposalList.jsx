@@ -101,9 +101,15 @@ export default function ProposalList({ projectId, projectStatus, onUpdate }) {
                     <p className="text-xs text-brand-muted">{p.freelancerTitle || 'Freelancer'}</p>
                   </div>
                 </div>
-                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLES[p.status]}`}>
-                  {p.status}
-                </span>
+                {p.status === 'ACCEPTED' && projectStatus === 'COMPLETED' ? (
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700">
+                    COMPLETED
+                  </span>
+                ) : (
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLES[p.status]}`}>
+                    {p.status}
+                  </span>
+                )}
               </div>
 
               <p className="text-sm text-brand-muted leading-relaxed mb-3">{p.coverLetter}</p>
@@ -142,9 +148,21 @@ export default function ProposalList({ projectId, projectStatus, onUpdate }) {
                 </div>
               )}
 
-              {p.status === 'ACCEPTED' && (
+              {p.status === 'ACCEPTED' && projectStatus === 'IN_PROGRESS' && (
                 <div className="bg-green-50 text-green-700 text-sm px-3 py-2 rounded-lg font-medium">
                   You accepted this proposal. The project is now in progress.
+                </div>
+              )}
+
+              {p.status === 'ACCEPTED' && projectStatus === 'COMPLETED' && (
+                <div className="bg-purple-50 text-purple-700 text-sm px-3 py-2 rounded-lg font-medium">
+                  Project completed. Payment has been released to the freelancer.
+                </div>
+              )}
+
+              {p.status === 'ACCEPTED' && projectStatus === 'CANCELLED' && (
+                <div className="bg-gray-100 text-gray-600 text-sm px-3 py-2 rounded-lg font-medium">
+                  This project was cancelled.
                 </div>
               )}
             </motion.div>

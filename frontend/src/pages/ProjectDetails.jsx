@@ -9,9 +9,11 @@ import {
 import { getProject, updateProjectStatus } from '../services/projectService';
 import { getMyProposals } from '../services/proposalService';
 import { getProjectPayment } from '../services/paymentService';
+import { getProjectReview, createReview } from '../services/reviewService';
 import { useAuth } from '../context/AuthContext';
 import ProposalModal from '../components/ProposalModal';
 import ProposalList from '../components/ProposalList';
+import StarRating from '../components/StarRating';
 
 const PROPOSAL_STATUS_STYLES = {
   SUBMITTED: 'bg-blue-50 text-blue-700',
@@ -30,6 +32,10 @@ export default function ProjectDetails() {
   const [myProposal, setMyProposal] = useState(null);
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [payment, setPayment] = useState(null);
+  const [review, setReview] = useState(null);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   const isClient = user?.role === 'CLIENT';
   const isFreelancer = user?.role === 'FREELANCER';
@@ -56,6 +62,8 @@ export default function ProjectDetails() {
       setProject(data);
       // Escrow status (null if none yet); ignore errors so the page still renders
       getProjectPayment(id).then(setPayment).catch(() => setPayment(null));
+      // Existing review, if the project has been reviewed
+      getProjectReview(id).then(setReview).catch(() => setReview(null));
     } catch (err) {
       console.error(err);
     } finally {
@@ -85,6 +93,22 @@ export default function ProjectDetails() {
       alert(err.response?.data?.message || 'Failed to update project status');
     } finally {
       setStatusUpdating(false);
+    }
+  }
+
+  async function handleSubmitReview() {
+    if (reviewRating < 1) {
+      alert('Please select a star rating');
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      const created = await createReview(id, { rating: reviewRating, comment: reviewComment });
+      setReview(created);
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to submit review');
+    } finally {
+      setSubmittingReview(false);
     }
   }
 
@@ -157,6 +181,48 @@ export default function ProjectDetails() {
                 projectStatus={project.status}
                 onUpdate={loadProject}
               />
+            </div>
+          )}
+
+          {/* Review form — owner, project completed, not yet reviewed */}
+          {ownerView && project.status === 'COMPLETED' && !review && (
+            <div className="bg-white border border-gray-100 rounded-lg p-8">
+              <h3 className="text-lg font-bold text-brand-ink mb-1">Leave a review</h3>
+              <p className="text-sm text-brand-muted mb-4">How was your experience with the freelancer?</p>
+              <div className="mb-4">
+                <StarRating value={reviewRating} onChange={setReviewRating} size={28} />
+              </div>
+              <textarea
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                rows={4}
+                maxLength={2000}
+                placeholder="Share details about the quality of work, communication, and timeliness..."
+                className="input-field resize-none"
+              />
+              <button
+                onClick={handleSubmitReview}
+                disabled={submittingReview}
+                className="btn-primary mt-4"
+              >
+                {submittingReview ? 'Submitting...' : 'Submit Review'}
+              </button>
+            </div>
+          )}
+
+          {/* Submitted review — visible to everyone */}
+          {review && (
+            <div className="bg-white border border-gray-100 rounded-lg p-8">
+              <h3 className="text-lg font-bold text-brand-ink mb-4">Client Review</h3>
+              <div className="flex items-center gap-3 mb-3">
+                <StarRating value={review.rating} size={20} showValue />
+              </div>
+              {review.comment && (
+                <p className="text-brand-muted leading-relaxed whitespace-pre-line">&ldquo;{review.comment}&rdquo;</p>
+              )}
+              <p className="text-xs text-brand-muted mt-3">
+                &mdash; {review.reviewerName}
+              </p>
             </div>
           )}
         </div>

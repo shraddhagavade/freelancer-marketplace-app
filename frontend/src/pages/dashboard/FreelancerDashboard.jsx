@@ -18,6 +18,15 @@ const STATUS_STYLES = {
   WITHDRAWN: 'bg-gray-100 text-gray-500',
 };
 
+// Each tab has a predicate over a proposal
+const PROPOSAL_TABS = [
+  { key: 'ALL', label: 'All', match: () => true },
+  { key: 'PENDING', label: 'Pending', match: (p) => p.status === 'SUBMITTED' },
+  { key: 'ACTIVE', label: 'Active', match: (p) => p.status === 'ACCEPTED' && p.projectStatus === 'IN_PROGRESS' },
+  { key: 'COMPLETED', label: 'Completed', match: (p) => p.status === 'ACCEPTED' && p.projectStatus === 'COMPLETED' },
+  { key: 'REJECTED', label: 'Rejected', match: (p) => p.status === 'REJECTED' },
+];
+
 export default function FreelancerDashboard() {
   const { user } = useAuth();
   const [proposals, setProposals] = useState([]);
@@ -25,6 +34,7 @@ export default function FreelancerDashboard() {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [withdrawingId, setWithdrawingId] = useState(null);
+  const [activeTab, setActiveTab] = useState('ALL');
 
   async function loadData() {
     try {
@@ -69,6 +79,10 @@ export default function FreelancerDashboard() {
     completed: proposals.filter((p) => p.status === 'ACCEPTED' && p.projectStatus === 'COMPLETED').length,
   };
 
+  const currentTab = PROPOSAL_TABS.find((t) => t.key === activeTab) || PROPOSAL_TABS[0];
+  const tabCount = (tab) => proposals.filter(tab.match).length;
+  const filteredProposals = proposals.filter(currentTab.match);
+
   return (
     <div className="section py-10">
       {/* Welcome */}
@@ -95,11 +109,31 @@ export default function FreelancerDashboard() {
         {/* My Proposals */}
         <div className="lg:col-span-2">
           <div className="bg-white border border-gray-100 rounded-lg p-6">
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-brand-ink">My Proposals</h2>
               <Link to="/projects" className="text-sm text-brand-primary font-medium flex items-center gap-1">
                 Find Work <HiOutlineArrowRight className="w-4 h-4" />
               </Link>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex flex-wrap gap-2 mb-5 border-b border-gray-100 pb-3">
+              {PROPOSAL_TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`text-sm font-medium px-3 py-1.5 rounded-full transition-colors ${
+                    activeTab === tab.key
+                      ? 'bg-brand-ink text-white'
+                      : 'text-brand-muted hover:bg-brand-hover'
+                  }`}
+                >
+                  {tab.label}
+                  <span className={`ml-1.5 ${activeTab === tab.key ? 'text-white/80' : 'text-brand-muted'}`}>
+                    {tabCount(tab)}
+                  </span>
+                </button>
+              ))}
             </div>
 
             {loading ? (
@@ -113,9 +147,11 @@ export default function FreelancerDashboard() {
                   <button className="btn-primary mt-4 !py-2.5 !px-6 text-sm">Browse Projects</button>
                 </Link>
               </div>
+            ) : filteredProposals.length === 0 ? (
+              <p className="text-brand-muted text-sm py-10 text-center">No proposals in this category.</p>
             ) : (
               <div className="space-y-3">
-                {proposals.map((p) => (
+                {filteredProposals.map((p) => (
                   <div key={p.id} className="border border-gray-100 rounded-xl p-4 hover:border-brand-ink transition-colors">
                     <div className="flex items-start justify-between gap-3">
                       <Link to={`/projects/${p.projectId}`} className="flex-1 group">

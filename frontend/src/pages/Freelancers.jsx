@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { HiOutlineSearch, HiOutlineStar, HiOutlineBriefcase } from 'react-icons/hi';
 import { browseFreelancers } from '../services/profileService';
 import Avatar from '../components/Avatar';
+import StarRating from '../components/StarRating';
 
 const EXPERIENCE_LEVELS = ['ENTRY', 'INTERMEDIATE', 'EXPERT'];
 const AVAILABILITY = ['FULL_TIME', 'PART_TIME', 'CONTRACT'];
@@ -126,6 +127,11 @@ export default function Freelancers() {
                       <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-brand-ink truncate">{f.firstName} {f.lastName}</h3>
                         <p className="text-sm text-brand-muted truncate">{f.title}</p>
+                        {f.averageRating != null && (
+                          <div className="mt-0.5">
+                            <StarRating value={f.averageRating} size={13} showValue />
+                          </div>
+                        )}
                       </div>
                     </div>
 

@@ -10,11 +10,20 @@ import { getMyProjects } from '../../services/projectService';
 import { getPaymentSummary } from '../../services/paymentService';
 import StatusPill from '../../components/ui/StatusPill';
 
+const PROJECT_TABS = [
+  { key: 'ALL', label: 'All' },
+  { key: 'OPEN', label: 'Open' },
+  { key: 'IN_PROGRESS', label: 'In Progress' },
+  { key: 'COMPLETED', label: 'Completed' },
+  { key: 'CANCELLED', label: 'Cancelled' },
+];
+
 export default function ClientDashboard() {
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('ALL');
 
   useEffect(() => {
     async function load() {
@@ -40,6 +49,9 @@ export default function ClientDashboard() {
     inProgress: projects.filter((p) => p.status === 'IN_PROGRESS').length,
     completed: projects.filter((p) => p.status === 'COMPLETED').length,
   };
+
+  const tabCount = (key) => (key === 'ALL' ? projects.length : projects.filter((p) => p.status === key).length);
+  const filteredProjects = activeTab === 'ALL' ? projects : projects.filter((p) => p.status === activeTab);
 
   return (
     <div className="section py-10">
@@ -74,8 +86,28 @@ export default function ClientDashboard() {
         {/* My Projects */}
         <div className="lg:col-span-2">
           <div className="bg-white border border-gray-100 rounded-lg p-6">
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-brand-ink">My Projects</h2>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex flex-wrap gap-2 mb-5 border-b border-gray-100 pb-3">
+              {PROJECT_TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`text-sm font-medium px-3 py-1.5 rounded-full transition-colors ${
+                    activeTab === tab.key
+                      ? 'bg-brand-ink text-white'
+                      : 'text-brand-muted hover:bg-brand-hover'
+                  }`}
+                >
+                  {tab.label}
+                  <span className={`ml-1.5 ${activeTab === tab.key ? 'text-white/80' : 'text-brand-muted'}`}>
+                    {tabCount(tab.key)}
+                  </span>
+                </button>
+              ))}
             </div>
 
             {loading ? (
@@ -89,9 +121,11 @@ export default function ClientDashboard() {
                   <button className="btn-primary mt-4 !py-2.5 !px-6 text-sm">Post a Project</button>
                 </Link>
               </div>
+            ) : filteredProjects.length === 0 ? (
+              <p className="text-brand-muted text-sm py-10 text-center">No projects in this category.</p>
             ) : (
               <div className="space-y-3">
-                {projects.map((p) => (
+                {filteredProjects.map((p) => (
                   <Link key={p.id} to={`/projects/${p.id}`} className="block">
                     <div className="border border-grey-1 rounded-lg p-4 hover:border-brand-primary hover:bg-brand-hover transition-colors">
                       <div className="flex items-start justify-between gap-3">
