@@ -12,22 +12,19 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProposalDto {
+public class PaymentDto {
     private Long id;
     private Long projectId;
     private String projectTitle;
-    private String projectStatus;   // OPEN, IN_PROGRESS, COMPLETED, CANCELLED
 
-    // Freelancer info
+    private Long clientId;
+    private String clientName;
+
     private Long freelancerId;
     private String freelancerName;
-    private String freelancerTitle;
-    private String freelancerAvatarUrl;
-    private Double freelancerRating;
 
-    private String coverLetter;
-    private BigDecimal proposedPrice;
-    private Integer estimatedDays;
-    private String status;
+    private BigDecimal amount;
+    private String status;          // HELD, RELEASED, REFUNDED
     private LocalDateTime createdAt;
+    private LocalDateTime releasedAt;
 }

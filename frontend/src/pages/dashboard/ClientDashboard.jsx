@@ -7,18 +7,24 @@ import {
 } from 'react-icons/hi';
 import { useAuth } from '../../context/AuthContext';
 import { getMyProjects } from '../../services/projectService';
+import { getPaymentSummary } from '../../services/paymentService';
 import StatusPill from '../../components/ui/StatusPill';
 
 export default function ClientDashboard() {
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
+  const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const data = await getMyProjects();
+        const [data, sum] = await Promise.all([
+          getMyProjects(),
+          getPaymentSummary().catch(() => null),
+        ]);
         setProjects(data);
+        setSummary(sum);
       } catch (err) {
         console.error(err);
       } finally {
@@ -126,6 +132,26 @@ export default function ClientDashboard() {
               </button>
             </Link>
           </div>
+
+          {/* Escrow / payments card */}
+          {summary && (
+            <div className="bg-white border border-gray-100 rounded-lg p-6 mt-6">
+              <h3 className="font-bold text-brand-ink mb-4">Payments</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-brand-muted">In escrow (held)</span>
+                  <span className="font-bold text-status-warning">&#8377;{Number(summary.heldAsClient || 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-brand-muted">Total released</span>
+                  <span className="font-bold text-status-success">&#8377;{Number(summary.spentAsClient || 0).toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+              <p className="text-xs text-brand-muted mt-4 leading-relaxed">
+                Funds are held in escrow when you accept a proposal and released to the freelancer when you mark the project completed.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

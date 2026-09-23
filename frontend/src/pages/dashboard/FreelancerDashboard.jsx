@@ -8,6 +8,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { getMyProposals, withdrawProposal } from '../../services/proposalService';
 import { getFreelancerProfile } from '../../services/profileService';
+import { getPaymentSummary } from '../../services/paymentService';
 
 const STATUS_STYLES = {
   SUBMITTED: 'bg-blue-50 text-blue-700',
@@ -21,17 +22,20 @@ export default function FreelancerDashboard() {
   const { user } = useAuth();
   const [proposals, setProposals] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [withdrawingId, setWithdrawingId] = useState(null);
 
   async function loadData() {
     try {
-      const [props, prof] = await Promise.all([
+      const [props, prof, sum] = await Promise.all([
         getMyProposals(),
         getFreelancerProfile(),
+        getPaymentSummary().catch(() => null),
       ]);
       setProposals(props);
       setProfile(prof);
+      setSummary(sum);
     } catch (err) {
       console.error(err);
     } finally {
@@ -58,9 +62,11 @@ export default function FreelancerDashboard() {
 
   const stats = {
     total: proposals.length,
-    accepted: proposals.filter((p) => p.status === 'ACCEPTED').length,
     pending: proposals.filter((p) => p.status === 'SUBMITTED').length,
-    rejected: proposals.filter((p) => p.status === 'REJECTED').length,
+    // Accepted and the project is still being worked on
+    active: proposals.filter((p) => p.status === 'ACCEPTED' && p.projectStatus === 'IN_PROGRESS').length,
+    // Accepted and the client marked the project completed
+    completed: proposals.filter((p) => p.status === 'ACCEPTED' && p.projectStatus === 'COMPLETED').length,
   };
 
   return (
@@ -81,8 +87,8 @@ export default function FreelancerDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
         <StatCard icon={<HiOutlineDocumentText />} label="Total Proposals" value={stats.total} />
         <StatCard icon={<HiOutlineClock />} label="Pending" value={stats.pending} color="text-blue-600" />
-        <StatCard icon={<HiOutlineCheckCircle />} label="Accepted" value={stats.accepted} color="text-green-600" />
-        <StatCard icon={<HiOutlineBriefcase />} label="Active Projects" value={stats.accepted} />
+        <StatCard icon={<HiOutlineBriefcase />} label="Active Projects" value={stats.active} color="text-green-600" />
+        <StatCard icon={<HiOutlineCheckCircle />} label="Completed" value={stats.completed} color="text-purple-600" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -116,9 +122,15 @@ export default function FreelancerDashboard() {
                         <h3 className="font-semibold text-brand-ink group-hover:text-brand-primary transition-colors">{p.projectTitle}</h3>
                         <p className="text-sm text-brand-muted mt-1 line-clamp-1">{p.coverLetter}</p>
                       </Link>
-                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${STATUS_STYLES[p.status]}`}>
-                        {p.status}
-                      </span>
+                      {p.status === 'ACCEPTED' && p.projectStatus === 'COMPLETED' ? (
+                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap bg-purple-50 text-purple-700">
+                          COMPLETED
+                        </span>
+                      ) : (
+                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${STATUS_STYLES[p.status]}`}>
+                          {p.status}
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center gap-4 text-sm text-brand-muted">
@@ -137,8 +149,14 @@ export default function FreelancerDashboard() {
                       {p.status === 'REJECTED' && (
                         <span className="text-xs text-red-500">Rejected by client</span>
                       )}
-                      {p.status === 'ACCEPTED' && (
-                        <span className="text-xs text-green-600 font-medium">Won this project</span>
+                      {p.status === 'ACCEPTED' && p.projectStatus === 'IN_PROGRESS' && (
+                        <span className="text-xs text-green-600 font-medium">In progress &mdash; you won this project</span>
+                      )}
+                      {p.status === 'ACCEPTED' && p.projectStatus === 'COMPLETED' && (
+                        <span className="text-xs text-purple-700 font-medium">Completed &amp; paid out</span>
+                      )}
+                      {p.status === 'ACCEPTED' && p.projectStatus === 'CANCELLED' && (
+                        <span className="text-xs text-brand-muted font-medium">Project cancelled</span>
                       )}
                     </div>
                   </div>
@@ -181,6 +199,26 @@ export default function FreelancerDashboard() {
               </button>
             </Link>
           </div>
+
+          {/* Earnings / escrow card */}
+          {summary && (
+            <div className="bg-white border border-gray-100 rounded-lg p-6 mt-6">
+              <h3 className="font-bold text-brand-ink mb-4">Earnings</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-brand-muted">Pending in escrow</span>
+                  <span className="font-bold text-status-warning">&#8377;{Number(summary.pendingAsFreelancer || 0).toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-brand-muted">Total earned</span>
+                  <span className="font-bold text-status-success">&#8377;{Number(summary.earnedAsFreelancer || 0).toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+              <p className="text-xs text-brand-muted mt-4 leading-relaxed">
+                When a client accepts your proposal, the amount is held in escrow and paid out once they mark the project completed.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

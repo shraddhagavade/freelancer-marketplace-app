@@ -8,6 +8,7 @@ import {
 } from 'react-icons/hi';
 import { getProject, updateProjectStatus } from '../services/projectService';
 import { getMyProposals } from '../services/proposalService';
+import { getProjectPayment } from '../services/paymentService';
 import { useAuth } from '../context/AuthContext';
 import ProposalModal from '../components/ProposalModal';
 import ProposalList from '../components/ProposalList';
@@ -28,6 +29,7 @@ export default function ProjectDetails() {
   const [modalOpen, setModalOpen] = useState(false);
   const [myProposal, setMyProposal] = useState(null);
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [payment, setPayment] = useState(null);
 
   const isClient = user?.role === 'CLIENT';
   const isFreelancer = user?.role === 'FREELANCER';
@@ -52,6 +54,8 @@ export default function ProjectDetails() {
     try {
       const data = await getProject(id);
       setProject(data);
+      // Escrow status (null if none yet); ignore errors so the page still renders
+      getProjectPayment(id).then(setPayment).catch(() => setPayment(null));
     } catch (err) {
       console.error(err);
     } finally {
@@ -254,6 +258,34 @@ export default function ProjectDetails() {
               )}
             </div>
           </div>
+
+          {/* Escrow status */}
+          {payment && (
+            <div className="bg-white border border-gray-100 rounded-lg p-6">
+              <h3 className="text-sm font-semibold text-brand-muted uppercase tracking-wider mb-3">Escrow</h3>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-brand-muted">Amount</span>
+                <span className="font-bold text-brand-ink">&#8377;{Number(payment.amount).toLocaleString('en-IN')}</span>
+              </div>
+              <div className="mt-3">
+                {payment.status === 'HELD' && (
+                  <div className="flex items-center gap-2 text-sm font-medium text-status-warning bg-amber-50 rounded-lg py-2.5 px-3">
+                    <HiOutlineClock className="w-4 h-4" /> Funds held in escrow
+                  </div>
+                )}
+                {payment.status === 'RELEASED' && (
+                  <div className="flex items-center gap-2 text-sm font-medium text-status-success bg-green-50 rounded-lg py-2.5 px-3">
+                    <HiOutlineCheckCircle className="w-4 h-4" /> Released to freelancer
+                  </div>
+                )}
+                {payment.status === 'REFUNDED' && (
+                  <div className="text-sm font-medium text-brand-muted bg-brand-hover rounded-lg py-2.5 px-3">
+                    Refunded to client
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Client info */}
           <Link

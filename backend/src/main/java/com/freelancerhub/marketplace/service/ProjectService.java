@@ -35,6 +35,7 @@ public class ProjectService {
     private final CategoryRepository categoryRepository;
     private final SkillRepository skillRepository;
     private final ClientProfileRepository clientProfileRepository;
+    private final PaymentService paymentService;
 
     @Transactional
     public ProjectDto createProject(String clientEmail, CreateProjectRequest request) {
@@ -153,6 +154,13 @@ public class ProjectService {
         project.setStatus(target);
         projectRepository.save(project);
         log.info("Project {} status updated to {}", projectId, target);
+
+        // Escrow transitions (simulated): release on completion, refund on cancellation
+        if (target == Project.ProjectStatus.COMPLETED) {
+            paymentService.releaseEscrow(project);
+        } else if (target == Project.ProjectStatus.CANCELLED) {
+            paymentService.refundEscrow(project);
+        }
 
         return mapToDto(project);
     }

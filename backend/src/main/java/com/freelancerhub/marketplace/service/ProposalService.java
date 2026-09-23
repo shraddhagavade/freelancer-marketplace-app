@@ -24,6 +24,7 @@ public class ProposalService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final FreelancerProfileRepository freelancerProfileRepository;
+    private final PaymentService paymentService;
 
     @Transactional
     public ProposalDto submitProposal(Long projectId, String freelancerEmail, CreateProposalRequest request) {
@@ -131,6 +132,9 @@ public class ProposalService {
         project.setStatus(Project.ProjectStatus.IN_PROGRESS);
         projectRepository.save(project);
 
+        // Hold the agreed amount in escrow (simulated)
+        paymentService.holdEscrow(project, proposal);
+
         log.info("Proposal {} accepted for project '{}'. Project now IN_PROGRESS.", proposalId, project.getTitle());
         return mapToDto(proposal);
     }
@@ -184,6 +188,7 @@ public class ProposalService {
                 .id(proposal.getId())
                 .projectId(proposal.getProject().getId())
                 .projectTitle(proposal.getProject().getTitle())
+                .projectStatus(proposal.getProject().getStatus().name())
                 .freelancerId(freelancer.getId())
                 .freelancerName(freelancer.getFirstName() + " " + freelancer.getLastName())
                 .freelancerTitle(profile != null ? profile.getTitle() : null)
