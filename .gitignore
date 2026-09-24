@@ -31,3 +31,6 @@ Thumbs.db
 
 # ===== Seed script (optional local helper) =====
 seed-data.ps1
+
+# ===== Personal interview prep (keep local, don't publish) =====
+INTERVIEW_PREP_KIT.md
