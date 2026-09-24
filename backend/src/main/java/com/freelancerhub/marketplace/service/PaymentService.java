@@ -37,6 +37,9 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final ClientProfileRepository clientProfileRepository;
     private final FreelancerProfileRepository freelancerProfileRepository;
+    private final PayPalService payPalService;
+    private final com.freelancerhub.marketplace.repository.ProjectRepository projectRepository;
+    private final com.freelancerhub.marketplace.repository.ProposalRepository proposalRepository;
 
     /**
      * Called when a client accepts a proposal. Creates (or reuses) a HELD escrow
@@ -61,6 +64,102 @@ public class PaymentService {
 
         paymentRepository.save(payment);
         log.info("Escrow HELD for project '{}' amount {}", project.getTitle(), payment.getAmount());
+    }
+
+    // ===== Real PayPal sandbox flow =====
+
+    public boolean isPayPalEnabled() {
+        return payPalService.isEnabled();
+    }
+
+    /**
+     * Client starts funding escrow via PayPal for their project's accepted proposal.
+     * Creates a PayPal order and a PENDING_PAYMENT payment record; returns the
+     * approval URL for the client to be redirected to.
+     */
+    @Transactional
+    public String initiatePayPalPayment(Long projectId, String clientEmail, String frontendReturnBase) {
+        com.freelancerhub.marketplace.entity.Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+
+        if (!project.getClient().getEmail().equals(clientEmail)) {
+            throw new com.freelancerhub.marketplace.exception.BadRequestException("Only the project owner can pay for this project");
+        }
+
+        // Find the accepted proposal to know the amount + freelancer
+        com.freelancerhub.marketplace.entity.Proposal accepted = proposalRepository.findByProjectId(projectId).stream()
+                .filter(p -> p.getStatus() == com.freelancerhub.marketplace.entity.Proposal.ProposalStatus.ACCEPTED)
+                .findFirst()
+                .orElseThrow(() -> new com.freelancerhub.marketplace.exception.BadRequestException("No accepted proposal found for this project"));
+
+        // If already funded, don't allow a second payment
+        Payment existing = paymentRepository.findByProjectId(projectId).orElse(null);
+        if (existing != null && existing.getStatus() == Payment.PaymentStatus.HELD) {
+            throw new com.freelancerhub.marketplace.exception.BadRequestException("This project is already funded");
+        }
+
+        String amount = accepted.getProposedPrice().setScale(2, java.math.RoundingMode.HALF_UP).toPlainString();
+        String returnUrl = frontendReturnBase + "/projects/" + projectId + "?paypal=return";
+        String cancelUrl = frontendReturnBase + "/projects/" + projectId + "?paypal=cancel";
+
+        PayPalService.CreatedOrder order = payPalService.createOrder(amount, returnUrl, cancelUrl);
+
+        // Create or update the payment record as PENDING_PAYMENT
+        Payment payment = (existing != null) ? existing : Payment.builder()
+                .project(project)
+                .client(project.getClient())
+                .freelancer(accepted.getFreelancer())
+                .proposal(accepted)
+                .amount(accepted.getProposedPrice())
+                .build();
+        payment.setStatus(Payment.PaymentStatus.PENDING_PAYMENT);
+        payment.setPaypalOrderId(order.orderId());
+        paymentRepository.save(payment);
+
+        log.info("PayPal order {} created for project '{}'", order.orderId(), project.getTitle());
+        return order.approvalUrl();
+    }
+
+    /**
+     * Called when the buyer returns from PayPal approval. Captures the order and,
+     * if COMPLETED, marks the escrow HELD.
+     */
+    @Transactional
+    public PaymentDto capturePayPalPayment(Long projectId, String clientEmail) {
+        Payment payment = paymentRepository.findByProjectId(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment", "projectId", projectId));
+
+        if (!payment.getClient().getEmail().equals(clientEmail)) {
+            throw new com.freelancerhub.marketplace.exception.BadRequestException("Only the project owner can capture this payment");
+        }
+
+        // Idempotent: if already held, just return it
+        if (payment.getStatus() == Payment.PaymentStatus.HELD) {
+            return mapToDto(payment);
+        }
+
+        if (payment.getPaypalOrderId() == null) {
+            throw new com.freelancerhub.marketplace.exception.BadRequestException("No PayPal order to capture");
+        }
+
+        try {
+            String status = payPalService.captureOrder(payment.getPaypalOrderId());
+            if (!"COMPLETED".equalsIgnoreCase(status)) {
+                throw new com.freelancerhub.marketplace.exception.BadRequestException("PayPal payment not completed (status: " + status + ")");
+            }
+        } catch (com.freelancerhub.marketplace.exception.BadRequestException e) {
+            // If PayPal says the order was already captured, the money is in - treat as success.
+            String msg = e.getMessage() == null ? "" : e.getMessage();
+            if (!msg.toUpperCase().contains("ALREADY_CAPTURED")) {
+                throw e;
+            }
+            log.info("PayPal order already captured for project {} - treating as HELD", projectId);
+        }
+
+        payment.setStatus(Payment.PaymentStatus.HELD);
+        paymentRepository.save(payment);
+        log.info("PayPal payment captured & escrow HELD for project {}", projectId);
+        return mapToDto(payment);
     }
 
     /**

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   HiOutlineCalendar, HiOutlineTag,
@@ -8,7 +8,7 @@ import {
 } from 'react-icons/hi';
 import { getProject, updateProjectStatus } from '../services/projectService';
 import { getMyProposals } from '../services/proposalService';
-import { getProjectPayment } from '../services/paymentService';
+import { getProjectPayment, isPayPalEnabled, createPayPalOrder, capturePayPalOrder } from '../services/paymentService';
 import { getProjectReview, createReview } from '../services/reviewService';
 import { useAuth } from '../context/AuthContext';
 import ProposalModal from '../components/ProposalModal';
@@ -25,6 +25,7 @@ const PROPOSAL_STATUS_STYLES = {
 export default function ProjectDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, isAuthenticated } = useAuth();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,9 @@ export default function ProjectDetails() {
   const [myProposal, setMyProposal] = useState(null);
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [payment, setPayment] = useState(null);
+  const [paypalEnabled, setPaypalEnabled] = useState(false);
+  const [paying, setPaying] = useState(false);
+  const capturedRef = useRef(false);
   const [review, setReview] = useState(null);
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState('');
@@ -93,6 +97,60 @@ export default function ProjectDetails() {
       alert(err.response?.data?.message || 'Failed to update project status');
     } finally {
       setStatusUpdating(false);
+    }
+  }
+
+  // Check whether real PayPal is enabled
+  useEffect(() => {
+    isPayPalEnabled().then(setPaypalEnabled).catch(() => setPaypalEnabled(false));
+  }, []);
+
+  // Handle return from PayPal approval: capture the payment
+  useEffect(() => {
+    const paypalParam = searchParams.get('paypal');
+    if (paypalParam === 'return' && !capturedRef.current) {
+      capturedRef.current = true; // guard against double-firing
+      (async () => {
+        setPaying(true);
+        try {
+          await capturePayPalOrder(id);
+          await loadProject();
+        } catch (err) {
+          const msg = err.response?.data?.message || '';
+          // "already captured" means the payment actually succeeded - not an error to show
+          if (!/already captured|ALREADY_CAPTURED/i.test(msg)) {
+            alert(msg || 'Failed to confirm PayPal payment');
+          }
+          await loadProject();
+        } finally {
+          setPaying(false);
+          // Clear the query param so a refresh doesn't re-trigger
+          searchParams.delete('paypal');
+          searchParams.delete('token');
+          searchParams.delete('PayerID');
+          setSearchParams(searchParams, { replace: true });
+        }
+      })();
+    } else if (paypalParam === 'cancel') {
+      searchParams.delete('paypal');
+      setSearchParams(searchParams, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  async function handlePayWithPayPal() {
+    setPaying(true);
+    try {
+      const approvalUrl = await createPayPalOrder(id);
+      if (approvalUrl) {
+        window.location.href = approvalUrl; // redirect to PayPal
+      } else {
+        alert('Could not start PayPal checkout');
+        setPaying(false);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to start PayPal checkout');
+      setPaying(false);
     }
   }
 
@@ -300,11 +358,23 @@ export default function ProjectDetails() {
                   <div className="text-center text-sm text-brand-muted bg-brand-hover rounded-lg py-2">
                     This is your project
                   </div>
+                  {/* Fund escrow via PayPal (real sandbox) - shown when enabled and not yet funded */}
+                  {project.status === 'IN_PROGRESS' && paypalEnabled && payment?.status !== 'HELD' && payment?.status !== 'RELEASED' && (
+                    <button
+                      onClick={handlePayWithPayPal}
+                      disabled={paying}
+                      className="w-full py-2.5 bg-[#0070ba] text-white rounded-lg text-sm font-semibold hover:bg-[#005ea6] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {paying ? 'Processing...' : 'Fund Escrow with PayPal'}
+                    </button>
+                  )}
+
                   {project.status === 'IN_PROGRESS' && (
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleStatusChange('COMPLETED')}
-                        disabled={statusUpdating}
+                        disabled={statusUpdating || (paypalEnabled && payment?.status !== 'HELD')}
+                        title={paypalEnabled && payment?.status !== 'HELD' ? 'Fund escrow via PayPal before completing' : ''}
                         className="flex-1 py-2.5 bg-brand-ink text-white rounded-lg text-sm font-semibold hover:bg-grey-8 transition-colors disabled:opacity-50"
                       >
                         Mark Complete
@@ -334,6 +404,11 @@ export default function ProjectDetails() {
                 <span className="font-bold text-brand-ink">&#8377;{Number(payment.amount).toLocaleString('en-IN')}</span>
               </div>
               <div className="mt-3">
+                {payment.status === 'PENDING_PAYMENT' && (
+                  <div className="flex items-center gap-2 text-sm font-medium text-brand-muted bg-brand-hover rounded-lg py-2.5 px-3">
+                    <HiOutlineClock className="w-4 h-4" /> Awaiting PayPal payment
+                  </div>
+                )}
                 {payment.status === 'HELD' && (
                   <div className="flex items-center gap-2 text-sm font-medium text-status-warning bg-amber-50 rounded-lg py-2.5 px-3">
                     <HiOutlineClock className="w-4 h-4" /> Funds held in escrow

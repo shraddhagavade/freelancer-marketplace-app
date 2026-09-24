@@ -49,17 +49,25 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    // Store as VARCHAR without a DB check constraint, so adding new enum
+    // values later doesn't clash with a stale check constraint.
     @Enumerated(EnumType.STRING)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.VARCHAR)
     @Column(nullable = false, length = 20)
     @Builder.Default
     private PaymentStatus status = PaymentStatus.HELD;
+
+    /** The PayPal order id (when funded via real PayPal sandbox). Null for simulated. */
+    @Column(length = 64)
+    private String paypalOrderId;
 
     /** When the funds were released to the freelancer (null while HELD). */
     private LocalDateTime releasedAt;
 
     public enum PaymentStatus {
-        HELD,
-        RELEASED,
-        REFUNDED
+        PENDING_PAYMENT,  // PayPal order created, awaiting buyer approval + capture
+        HELD,             // funds captured / held in escrow
+        RELEASED,         // released to freelancer on completion
+        REFUNDED          // refunded to client on cancellation
     }
 }

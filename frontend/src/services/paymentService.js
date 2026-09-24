@@ -23,3 +23,21 @@ export async function getProjectPayment(projectId) {
   const response = await api.get(`/payments/project/${projectId}`);
   return response.data;
 }
+
+// Whether real PayPal checkout is enabled on the backend
+export async function isPayPalEnabled() {
+  const response = await api.get('/payments/paypal/enabled');
+  return response.data?.enabled === true;
+}
+
+// Start PayPal checkout for a project; returns the approval URL to redirect to
+export async function createPayPalOrder(projectId) {
+  const response = await api.post(`/payments/paypal/create/${projectId}`);
+  return response.data?.approvalUrl;
+}
+
+// Capture the PayPal payment after returning from approval
+export async function capturePayPalOrder(projectId) {
+  const response = await api.post(`/payments/paypal/capture/${projectId}`);
+  return response.data;
+}

@@ -132,8 +132,12 @@ public class ProposalService {
         project.setStatus(Project.ProjectStatus.IN_PROGRESS);
         projectRepository.save(project);
 
-        // Hold the agreed amount in escrow (simulated)
-        paymentService.holdEscrow(project, proposal);
+        // Escrow funding:
+        //  - if PayPal is enabled, the client funds via PayPal separately (no auto-hold here)
+        //  - otherwise, simulate holding the funds immediately
+        if (!paymentService.isPayPalEnabled()) {
+            paymentService.holdEscrow(project, proposal);
+        }
 
         log.info("Proposal {} accepted for project '{}'. Project now IN_PROGRESS.", proposalId, project.getTitle());
         return mapToDto(proposal);
