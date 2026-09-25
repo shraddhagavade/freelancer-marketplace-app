@@ -3,6 +3,7 @@ import { HiOutlineSearch, HiOutlineLogout, HiOutlineViewGrid, HiOutlineUser, HiO
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Avatar from '../Avatar';
+import NotificationBell from '../NotificationBell';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -68,6 +69,8 @@ export default function Navbar() {
           <button className="p-2 hover:bg-brand-hover rounded text-brand-muted transition-colors">
             <HiOutlineSearch className="w-5 h-5" />
           </button>
+
+          {isAuthenticated && <NotificationBell />}
 
           {isAuthenticated ? (
             /* User menu */

@@ -40,6 +40,7 @@ public class PaymentService {
     private final PayPalService payPalService;
     private final com.freelancerhub.marketplace.repository.ProjectRepository projectRepository;
     private final com.freelancerhub.marketplace.repository.ProposalRepository proposalRepository;
+    private final NotificationService notificationService;
 
     /**
      * Called when a client accepts a proposal. Creates (or reuses) a HELD escrow
@@ -189,6 +190,13 @@ public class PaymentService {
                 fp.setCompletedProjects(completed + 1);
                 freelancerProfileRepository.save(fp);
             });
+
+            // Notify the freelancer their payment was released
+            notificationService.notify(
+                    payment.getFreelancer(),
+                    com.freelancerhub.marketplace.entity.Notification.NotificationType.PAYMENT_RELEASED,
+                    "Payment of \u20B9" + payment.getAmount() + " was released for \"" + project.getTitle() + "\"",
+                    "/dashboard");
 
             log.info("Escrow RELEASED for project '{}' amount {} to freelancer {}",
                     project.getTitle(), payment.getAmount(), payment.getFreelancer().getEmail());

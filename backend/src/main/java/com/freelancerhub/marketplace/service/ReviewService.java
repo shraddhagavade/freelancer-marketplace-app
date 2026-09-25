@@ -32,6 +32,7 @@ public class ReviewService {
     private final ProposalRepository proposalRepository;
     private final UserRepository userRepository;
     private final FreelancerProfileRepository freelancerProfileRepository;
+    private final NotificationService notificationService;
 
     /**
      * A client leaves a review for the freelancer who completed their project.
@@ -78,6 +79,13 @@ public class ReviewService {
 
         // Recompute the freelancer's average rating from all their reviews
         recomputeAverageRating(freelancer.getId());
+
+        // Notify the freelancer they received a review
+        notificationService.notify(
+                freelancer,
+                com.freelancerhub.marketplace.entity.Notification.NotificationType.REVIEW_RECEIVED,
+                "You received a " + request.getRating() + "-star review for \"" + project.getTitle() + "\"",
+                "/freelancers/" + freelancer.getId());
 
         log.info("Review created for project '{}' - {} stars for freelancer {}",
                 project.getTitle(), request.getRating(), freelancer.getEmail());

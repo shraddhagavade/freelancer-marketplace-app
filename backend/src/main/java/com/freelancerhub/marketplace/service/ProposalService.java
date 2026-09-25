@@ -25,6 +25,7 @@ public class ProposalService {
     private final UserRepository userRepository;
     private final FreelancerProfileRepository freelancerProfileRepository;
     private final PaymentService paymentService;
+    private final NotificationService notificationService;
 
     @Transactional
     public ProposalDto submitProposal(Long projectId, String freelancerEmail, CreateProposalRequest request) {
@@ -70,6 +71,13 @@ public class ProposalService {
         // Update proposal count on project
         project.setProposalCount(proposalRepository.countByProjectId(projectId));
         projectRepository.save(project);
+
+        // Notify the client (project owner) about the new proposal
+        notificationService.notify(
+                project.getClient(),
+                Notification.NotificationType.NEW_PROPOSAL,
+                freelancer.getFirstName() + " " + freelancer.getLastName() + " submitted a proposal on \"" + project.getTitle() + "\"",
+                "/projects/" + project.getId());
 
         log.info("Proposal submitted by {} for project '{}'", freelancerEmail, project.getTitle());
         return mapToDto(proposal);
@@ -125,8 +133,21 @@ public class ProposalService {
             if (!other.getId().equals(proposalId) && other.getStatus() == Proposal.ProposalStatus.SUBMITTED) {
                 other.setStatus(Proposal.ProposalStatus.REJECTED);
                 proposalRepository.save(other);
+                // Notify each auto-rejected freelancer
+                notificationService.notify(
+                        other.getFreelancer(),
+                        Notification.NotificationType.PROPOSAL_REJECTED,
+                        "Your proposal for \"" + project.getTitle() + "\" was not selected",
+                        "/projects/" + project.getId());
             }
         }
+
+        // Notify the accepted freelancer
+        notificationService.notify(
+                proposal.getFreelancer(),
+                Notification.NotificationType.PROPOSAL_ACCEPTED,
+                "Your proposal for \"" + project.getTitle() + "\" was accepted!",
+                "/projects/" + project.getId());
 
         // Move project to IN_PROGRESS
         project.setStatus(Project.ProjectStatus.IN_PROGRESS);
@@ -154,6 +175,13 @@ public class ProposalService {
 
         proposal.setStatus(Proposal.ProposalStatus.REJECTED);
         proposalRepository.save(proposal);
+
+        // Notify the freelancer
+        notificationService.notify(
+                proposal.getFreelancer(),
+                Notification.NotificationType.PROPOSAL_REJECTED,
+                "Your proposal for \"" + proposal.getProject().getTitle() + "\" was rejected by the client",
+                "/projects/" + proposal.getProject().getId());
 
         log.info("Proposal {} rejected", proposalId);
         return mapToDto(proposal);
