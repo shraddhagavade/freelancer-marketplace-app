@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   HiOutlineArrowLeft, HiOutlineBriefcase,
   HiOutlineClock, HiOutlineStar, HiOutlineGlobe, HiOutlineExternalLink,
-  HiOutlineMail, HiOutlineX,
+  HiOutlineMail, HiOutlineX, HiOutlineChatAlt2,
 } from 'react-icons/hi';
 import { getFreelancerById } from '../services/profileService';
 import { getFreelancerReviews } from '../services/reviewService';
@@ -14,7 +14,7 @@ import StarRating from '../components/StarRating';
 
 export default function FreelancerDetails() {
   const { id } = useParams();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -213,6 +213,14 @@ export default function FreelancerDetails() {
             >
               <HiOutlineMail className="w-4 h-4" /> Contact Freelancer
             </button>
+
+            {isAuthenticated && user?.userId !== profile.userId && (
+              <Link to={`/messages?with=${profile.userId}`}>
+                <button className="btn-secondary w-full mt-3 flex items-center justify-center gap-2">
+                  <HiOutlineChatAlt2 className="w-4 h-4" /> Message
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       </motion.div>

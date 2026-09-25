@@ -23,8 +23,12 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
-    /** Create a notification for a recipient. Best-effort: never breaks the caller. */
-    @Transactional
+    /**
+     * Create a notification for a recipient. Best-effort: runs in its OWN
+     * transaction (REQUIRES_NEW) so a notification failure can never roll back
+     * or poison the caller's transaction (e.g. sending a message).
+     */
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     public void notify(User recipient, Notification.NotificationType type, String message, String link) {
         try {
             Notification n = Notification.builder()

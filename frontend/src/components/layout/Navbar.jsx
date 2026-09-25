@@ -1,7 +1,8 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { HiOutlineSearch, HiOutlineLogout, HiOutlineViewGrid, HiOutlineUser, HiOutlineChevronDown } from 'react-icons/hi';
-import { useState, useRef, useEffect } from 'react';
+import { HiOutlineSearch, HiOutlineLogout, HiOutlineViewGrid, HiOutlineUser, HiOutlineChevronDown, HiOutlineChatAlt2 } from 'react-icons/hi';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { getUnreadMessageCount } from '../../services/messageService';
 import Avatar from '../Avatar';
 import NotificationBell from '../NotificationBell';
 
@@ -11,6 +12,22 @@ export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const menuRef = useRef(null);
+  const [msgUnread, setMsgUnread] = useState(0);
+
+  const refreshMsgUnread = useCallback(async () => {
+    if (!isAuthenticated) return;
+    try {
+      setMsgUnread(await getUnreadMessageCount());
+    } catch {
+      // ignore
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    refreshMsgUnread();
+    const interval = setInterval(refreshMsgUnread, 30000);
+    return () => clearInterval(interval);
+  }, [refreshMsgUnread]);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -69,6 +86,17 @@ export default function Navbar() {
           <button className="p-2 hover:bg-brand-hover rounded text-brand-muted transition-colors">
             <HiOutlineSearch className="w-5 h-5" />
           </button>
+
+          {isAuthenticated && (
+            <Link to="/messages" className="relative p-2 hover:bg-brand-hover rounded text-brand-muted transition-colors" aria-label="Messages">
+              <HiOutlineChatAlt2 className="w-5 h-5" />
+              {msgUnread > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold text-white bg-status-error rounded-full">
+                  {msgUnread > 9 ? '9+' : msgUnread}
+                </span>
+              )}
+            </Link>
+          )}
 
           {isAuthenticated && <NotificationBell />}
 

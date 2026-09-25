@@ -43,6 +43,7 @@ public class Notification extends BaseEntity {
         PROPOSAL_ACCEPTED,
         PROPOSAL_REJECTED,
         PAYMENT_RELEASED,
-        REVIEW_RECEIVED
+        REVIEW_RECEIVED,
+        NEW_MESSAGE
     }
 }

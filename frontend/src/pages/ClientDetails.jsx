@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   HiOutlineArrowLeft, HiOutlineOfficeBuilding, HiOutlineLocationMarker,
   HiOutlineGlobe, HiOutlineMail, HiOutlineBriefcase, HiOutlineExternalLink,
-  HiOutlineCalendar, HiOutlineX,
+  HiOutlineCalendar, HiOutlineX, HiOutlineChatAlt2,
 } from 'react-icons/hi';
 import { getPublicClientProfile } from '../services/profileService';
 import { useAuth } from '../context/AuthContext';
@@ -19,7 +19,7 @@ const STATUS_STYLES = {
 
 export default function ClientDetails() {
   const { id } = useParams();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showContact, setShowContact] = useState(false);
@@ -170,6 +170,14 @@ export default function ClientDetails() {
             >
               <HiOutlineMail className="w-4 h-4" /> Contact Client
             </button>
+
+            {isAuthenticated && String(user?.userId) !== String(id) && (
+              <Link to={`/messages?with=${id}`}>
+                <button className="btn-secondary w-full mt-3 flex items-center justify-center gap-2">
+                  <HiOutlineChatAlt2 className="w-4 h-4" /> Message
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       </motion.div>

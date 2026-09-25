@@ -14,6 +14,7 @@ import ClientDetails from './pages/ClientDetails';
 import Dashboard from './pages/dashboard/Dashboard';
 import FreelancerProfilePage from './pages/dashboard/FreelancerProfilePage';
 import ClientProfilePage from './pages/dashboard/ClientProfilePage';
+import Messages from './pages/Messages';
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/projects/:id" element={<ProjectDetails />} />
           <Route path="/dashboard/profile" element={<ProtectedRoute role="FREELANCER"><FreelancerProfilePage /></ProtectedRoute>} />
           <Route path="/dashboard/company" element={<ProtectedRoute role="CLIENT"><ClientProfilePage /></ProtectedRoute>} />
+          <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         </Routes>
       </main>
       <Footer />
