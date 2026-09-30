@@ -51,3 +51,24 @@ export async function getSkills() {
   const response = await api.get('/skills');
   return response.data;
 }
+
+// ===== Portfolio / work samples =====
+
+export async function getFreelancerPortfolio(userId) {
+  const response = await api.get(`/freelancers/${userId}/portfolio`);
+  return response.data;
+}
+
+export async function addPortfolioItem(data) {
+  const response = await api.post('/portfolio', data);
+  return response.data;
+}
+
+export async function updatePortfolioItem(id, data) {
+  const response = await api.put(`/portfolio/${id}`, data);
+  return response.data;
+}
+
+export async function deletePortfolioItem(id) {
+  await api.delete(`/portfolio/${id}`);
+}

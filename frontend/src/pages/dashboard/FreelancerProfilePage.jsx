@@ -4,6 +4,7 @@ import { HiOutlineBriefcase, HiOutlineClock, HiOutlineCurrencyDollar, HiOutlineG
 import { getFreelancerProfile, updateFreelancerProfile, getSkills } from '../../services/profileService';
 import AvatarUpload from '../../components/AvatarUpload';
 import Avatar from '../../components/Avatar';
+import PortfolioManager from '../../components/PortfolioManager';
 import { useAuth } from '../../context/AuthContext';
 
 const EXPERIENCE_LEVELS = ['ENTRY', 'INTERMEDIATE', 'EXPERT'];
@@ -335,6 +336,11 @@ export default function FreelancerProfilePage() {
             </div>
           </div>
         </form>
+
+        {/* Portfolio management (outside the form so its buttons don't submit) */}
+        <div className="mt-8">
+          <PortfolioManager userId={profile?.userId} />
+        </div>
       </motion.div>
     </div>
   );

@@ -110,12 +110,22 @@ export default {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        spinSlow: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        glowPulse: {
+          '0%, 100%': { opacity: '0.5', transform: 'scale(1)' },
+          '50%': { opacity: '0.9', transform: 'scale(1.08)' },
+        },
       },
       animation: {
         float: 'float 4s ease-in-out infinite',
         'float-slow': 'floatSlow 6s ease-in-out infinite',
         blob: 'blob 12s ease-in-out infinite',
         marquee: 'marquee 22s linear infinite',
+        'spin-slow': 'spinSlow 8s linear infinite',
+        'glow-pulse': 'glowPulse 3s ease-in-out infinite',
       },
     },
   },
