@@ -108,6 +108,10 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        // Strength 8 (default is 10). Lower cost = ~4x less CPU/memory per hash,
+        // which keeps login reliable on low-memory hosting (Render free tier)
+        // while remaining secure. Existing hashes created at strength 10 still
+        // verify correctly (BCrypt stores its cost factor in the hash).
+        return new BCryptPasswordEncoder(8);
     }
 }
