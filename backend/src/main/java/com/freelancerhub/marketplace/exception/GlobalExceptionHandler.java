@@ -3,6 +3,7 @@ package com.freelancerhub.marketplace.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -65,22 +66,23 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleUnreadable(HttpMessageNotReadableException ex) {
+        log.warn("Malformed request body: {}", ex.getMostSpecificCause().getMessage());
+        ApiError error = new ApiError(
+                HttpStatus.BAD_REQUEST.value(),
+                "Malformed request body",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
         log.error("Unexpected error: ", ex);
-        // TEMP DIAGNOSTIC: surface the real exception type + message + cause so we can
-        // root-cause the production login 500 without log access. Revert after fixing.
-        String detail = ex.getClass().getName() + ": " + ex.getMessage();
-        Throwable cause = ex.getCause();
-        int depth = 0;
-        while (cause != null && depth < 5) {
-            detail += " | caused by " + cause.getClass().getName() + ": " + cause.getMessage();
-            cause = cause.getCause();
-            depth++;
-        }
         ApiError error = new ApiError(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                detail,
+                "An unexpected error occurred. Please try again later.",
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
