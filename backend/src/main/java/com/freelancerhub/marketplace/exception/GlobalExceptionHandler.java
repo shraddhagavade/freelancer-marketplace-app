@@ -68,9 +68,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
         log.error("Unexpected error: ", ex);
+        // TEMP DIAGNOSTIC: surface the real exception type + message + cause so we can
+        // root-cause the production login 500 without log access. Revert after fixing.
+        String detail = ex.getClass().getName() + ": " + ex.getMessage();
+        Throwable cause = ex.getCause();
+        int depth = 0;
+        while (cause != null && depth < 5) {
+            detail += " | caused by " + cause.getClass().getName() + ": " + cause.getMessage();
+            cause = cause.getCause();
+            depth++;
+        }
         ApiError error = new ApiError(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "An unexpected error occurred. Please try again later.",
+                detail,
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
